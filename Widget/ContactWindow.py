@@ -25,7 +25,7 @@ class ContactWindow(QDialog):
         self.ui.noteBox.setText(contactInfo['note'])
         for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
             if self.ui.tagsList.invisibleRootItem().child(i).text(0) in contactInfo['tags']:
-                self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Unchecked)
+                self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Checked)
 
         # Connect function to controller    
         self.ui.backButton.clicked.connect(self._controller.backFunction)

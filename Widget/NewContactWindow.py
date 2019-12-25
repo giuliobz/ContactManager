@@ -19,6 +19,7 @@ class NewContactWindow(QDialog):
 
         # Connect button
         self.ui.saveButton.clicked.connect(self.insertContact)
+        self.ui.resetButton.clicked.connect(self.resetButton)
 
 
     def insertContact(self):
@@ -33,5 +34,15 @@ class NewContactWindow(QDialog):
                 tags.append(self.ui.tagsList.invisibleRootItem().child(i).text(0))
         
         self._controller.insertNewContact([name, secondName, phone, mail, notes, tags])
-        #self.close()
+        self.close()
+
+    def resetButton(self):
+        name = self.ui.nameLine.setText('')
+        secondName = self.ui.seconNameLine.setText('')
+        phone = self.ui.telephoneLine.setText('')
+        mail = self.ui.emailLine.setText('')
+        notes = self.ui.noteBox.setText('')
+        for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
+            if(self.ui.tagsList.invisibleRootItem().child(i).checkState(0) == Qt.Checked):
+               self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Unchecked)
             
