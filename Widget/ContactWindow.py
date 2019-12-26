@@ -20,14 +20,14 @@ class ContactWindow(QDialog):
         # Set info in window
         self.ui.nameLine.setText(contactInfo['name'])
         self.ui.seconNameLine.setText(contactInfo['secondName'])
-        self.ui.telephoneLine.setText(contactInfo['telephone'])
-        self.ui.emailLine.setText(contactInfo['email'])
-        self.ui.noteBox.setText(contactInfo['note'])
+        self.ui.telephoneLine.setText(contactInfo['phone'])
+        self.ui.emailLine.setText(contactInfo['mail'])
+        self.ui.noteBox.setText(contactInfo['notes'])
         for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
             if self.ui.tagsList.invisibleRootItem().child(i).text(0) in contactInfo['tags']:
                 self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Checked)
 
         # Connect function to controller    
-        self.ui.backButton.clicked.connect(self._controller.backFunction)
+        self.ui.backButton.clicked.connect(self.close)
 
 

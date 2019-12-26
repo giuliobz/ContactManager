@@ -20,28 +20,31 @@ class NewContactWindow(QDialog):
         # Connect button
         self.ui.saveButton.clicked.connect(self.insertContact)
         self.ui.resetButton.clicked.connect(self.resetButton)
+        self.ui.backButton.clicked.connect(self.close)
 
 
     def insertContact(self):
-        name = self.ui.nameLine.text()
-        secondName = self.ui.seconNameLine.text()
-        phone = self.ui.telephoneLine.text()
-        mail = self.ui.emailLine.text()
-        notes = self.ui.noteBox.toPlainText()
-        tags = []
+        contactInfo = {}
+        contactInfo['name'] = self.ui.nameLine.text()
+        contactInfo['secondName'] = self.ui.seconNameLine.text()
+        contactInfo['phone'] = self.ui.telephoneLine.text()
+        contactInfo['mail'] = self.ui.emailLine.text()
+        contactInfo['notes'] = self.ui.noteBox.toPlainText()
+        contactInfo['tags'] = []
         for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
             if(self.ui.tagsList.invisibleRootItem().child(i).checkState(0) == Qt.Checked):
-                tags.append(self.ui.tagsList.invisibleRootItem().child(i).text(0))
+                contactInfo['tags'].append(self.ui.tagsList.invisibleRootItem().child(i).text(0))
         
-        self._controller.insertNewContact([name, secondName, phone, mail, notes, tags])
+        self._controller.insertNewContact(contactInfo)
         self.close()
 
     def resetButton(self):
-        name = self.ui.nameLine.setText('')
-        secondName = self.ui.seconNameLine.setText('')
-        phone = self.ui.telephoneLine.setText('')
-        mail = self.ui.emailLine.setText('')
-        notes = self.ui.noteBox.setText('')
+        
+        self.ui.nameLine.setText('')
+        self.ui.seconNameLine.setText('')
+        self.ui.telephoneLine.setText('')
+        self.ui.emailLine.setText('')
+        self.ui.noteBox.setText('')
         for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
             if(self.ui.tagsList.invisibleRootItem().child(i).checkState(0) == Qt.Checked):
                self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Unchecked)
