@@ -19,6 +19,7 @@ class ContactWindow(QDialog):
         self.ui.setupUi(self)
 
         # Set info in window
+        self.ui.photo.setPixmap(QPixmap(contactInfo['photo']))
         self.ui.nameLine.setText(contactInfo['name'])
         self.ui.seconNameLine.setText(contactInfo['secondName'])
         self.ui.telephoneLine.setText(contactInfo['phone'])

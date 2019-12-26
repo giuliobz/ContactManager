@@ -1,3 +1,5 @@
+import os
+import cv2
 import sqlite3
 
 class Database:
@@ -7,12 +9,14 @@ class Database:
 
         self.connection = sqlite3.connect("Database/database.db")
         self.cursor = self.connection.cursor()
-        self.connection.execute("CREATE TABLE IF NOT EXISTS CONTACTS(C_ID TEXT, FIRST_NAME TEXT, LAST_NAME TEXT, TELEPHONE TEXT, EMAIL TEXT, NOTES TEXT, TAGS TEXT)")
+        self.connection.execute("CREATE TABLE IF NOT EXISTS CONTACTS(C_ID TEXT, PHOTO TEXT, FIRST_NAME TEXT, LAST_NAME TEXT, TELEPHONE TEXT, EMAIL TEXT, NOTES TEXT, TAGS TEXT)")
         self.connection.commit()
 
     # save contact in database
-    def saveContact(self, id, first_name, last_name, telephone, e_mail, notes, tags):
-        self.connection.execute("INSERT INTO CONTACTS VALUES(?,?,?,?,?,?,?)", (id, first_name, last_name, telephone, e_mail, notes, tags))
+    def saveContact(self, id, photo, first_name, last_name, telephone, e_mail, notes, tags):
+        image_path = 'Database/imageDatabase/' + first_name + '_' + last_name + '.png'
+        self.connection.execute("INSERT INTO CONTACTS VALUES(?,?,?,?,?,?,?,?)", (id, image_path, first_name, last_name, telephone, e_mail, notes, tags))
+        cv2.imwrite(image_path, cv2.imread(photo))
         self.connection.commit()
 
     # get all contact of the database order by name
@@ -21,13 +25,14 @@ class Database:
         return result.fetchall()
     
     # update a contact with new data
-    def updateContact(self,first_name, last_name, telephone, email, notes, tags, id):
-        self.connection.execute("""UPDATE CONTACTS SET FIRST_NAME=?, LAST_NAME=?,TELEPHONE=?, EMAIL=?, NOTES=?, TAGS=? WHERE C_ID=?""", (first_name,last_name,telephone,email ,notes, tags, id))
+    def updateContact(self, photo, first_name, last_name, telephone, email, notes, tags, id):
+        self.connection.execute("""UPDATE CONTACTS SET PHOTO=?, FIRST_NAME=?, LAST_NAME=?,TELEPHONE=?, EMAIL=?, NOTES=?, TAGS=? WHERE C_ID=?""", (photo, first_name,last_name,telephone,email ,notes, tags, id))
         self.connection.commit()
 
     #delete a contact
-    def deleteContact(self, id):
+    def deleteContact(self, id, photo):
         self.connection.execute("DELETE FROM CONTACTS WHERE C_ID = ?", (id,))
+        os.remove(photo)
         self.connection.commit()
 
     

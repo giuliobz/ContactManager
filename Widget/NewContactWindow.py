@@ -3,7 +3,7 @@ import cv2
 from Build.Ui_NewContactWidget import Ui_NewContactWidget
 
 from PyQt5.Qt import pyqtSlot, Qt, pyqtSignal, QObject
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QFileDialog
 from PyQt5.QtGui import QImage, QPixmap
 
 # Window that contain all the clips in annotation buffer with the correlated preferencies
@@ -24,16 +24,15 @@ class NewContactWindow(QDialog):
         self.ui.saveButton.clicked.connect(self.insertContact)
         self.ui.resetButton.clicked.connect(self.resetButton)
         self.ui.backButton.clicked.connect(lambda : self.close())
+        self.ui.setPhoto.clicked.connect(lambda : self.changeImage())
 
         # Set default image. In this case is easier to put toghether thw controller and the view
-        # and have a model that have inside the contact image
-        h, w, ch = cv2.imread(self._model.contactImage).shape
-        bytesPerLine = ch * w
-        convertToQtFormat = QImage(cv2.imread(self._model.contactImage), w, h, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
-        self.ui.photo.setPixmap(QPixmap.fromImage(convertToQtFormat))
+        # and have a model that have inside the contact image.
+        self.ui.photo.setPixmap(QPixmap(self._model.contactImage))
 
     def insertContact(self):
         contactInfo = {}
+        contactInfo['photo'] = self._model.contactImage
         contactInfo['name'] = self.ui.nameLine.text()
         contactInfo['secondName'] = self.ui.seconNameLine.text()
         contactInfo['phone'] = self.ui.telephoneLine.text()
@@ -59,7 +58,12 @@ class NewContactWindow(QDialog):
                self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Unchecked)
 
     def changeImage(self):
-        pass
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName = QFileDialog.getOpenFileName(self, caption='Open file', filter="Image files (*.jpg *.gif *.png)", options=options)
+        if fileName[0] != '':
+            self._model.contactImage = fileName[0]
+            self.ui.photo.setPixmap(QPixmap(self._model.contactImage))
 
 class NewContactWindowModel(QObject):
 
@@ -68,6 +72,7 @@ class NewContactWindowModel(QObject):
 
         # Define the image path
         self._contactImage = 'Build/contact_2.png'
+        
 
     @property
     def contactImage(self):

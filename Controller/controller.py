@@ -39,13 +39,15 @@ class Controller(QObject):
             if self._model.id < int(contact[0]):
                 self._model.id = int(contact[0])
 
+            
             contactInfo['id'] = int(contact[0])
-            contactInfo['name'] = contact[1]
-            contactInfo['secondName'] = contact[2]
-            contactInfo['phone'] = contact[3]
-            contactInfo['mail'] = contact[4]
-            contactInfo['notes'] = contact[5]
-            contactInfo['tags'] = contact[6].split('/')
+            contactInfo['photo'] = (contact[1])
+            contactInfo['name'] = contact[2]
+            contactInfo['secondName'] = contact[3]
+            contactInfo['phone'] = contact[4]
+            contactInfo['mail'] = contact[5]
+            contactInfo['notes'] = contact[6]
+            contactInfo['tags'] = contact[7].split('/')
             self.insertNewContact(contactInfo)
         
         self._model.id = self._model.id + 1

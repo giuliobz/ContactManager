@@ -70,7 +70,7 @@ class Model(QObject):
         if isinstance(newContact[0], dict) and 'id' not in newContact[0].keys():
 
             self._currentContactList[self._id] = newContact[0]
-            self._database.saveContact(self._id, newContact[0]['name'], newContact[0]['secondName'], newContact[0]['phone'], newContact[0]['mail'], newContact[0]['notes'], newContact[0]['tags'])
+            self._database.saveContact(self._id, newContact[0]['photo'], newContact[0]['name'], newContact[0]['secondName'], newContact[0]['phone'], newContact[0]['mail'], newContact[0]['notes'], newContact[0]['tags'])
             self.insertElementSygnal.emit([newContact[0]['name'] + ' ' + newContact[0]['secondName'], newContact[1], newContact[2]])
             self._id += 1
 
@@ -85,8 +85,8 @@ class Model(QObject):
             
             for contact in newContact[0]:
                 
+                self._database.deleteContact(contact, self._currentContactList[contact]['photo'])
                 del self._currentContactList[contact]
-                self._database.deleteContact(contact)
             
             self.deleteElementsSygnal.emit()
             self._selected_element = []
