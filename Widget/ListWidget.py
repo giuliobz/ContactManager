@@ -2,8 +2,6 @@ import csv
 
 from Build.Ui_ListWidget import Ui_Form
 
-from Widget.NewContactWindow import NewContactWindow
-from Widget.ContactWindow import ContactWindow
 from Widget.ContactButton import ContactButton
 
 from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
@@ -28,14 +26,14 @@ class ListWidget(QDialog):
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
 
         # Define Add Button
-        self.ui.addButton.clicked.connect(lambda : NewContactWindow(self._controller).exec_())
+        self.ui.addButton.clicked.connect(lambda : self._controller.changeWindow('add'))
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
         self.ui.deleteButton.clicked.connect(lambda : self._controller.deleteContacts())
         self.ui.contactList.itemChanged.connect(self.upload_selected_element)
 
         # connect list to the model
         self._model.insertElementSygnal.connect(self.add_annotation)
-        self._model.deleteElementSygnal.connect(self.delete_contact)
+        self._model.deleteElementsSygnal.connect(self.delete_item)
 
         #self._model._database.deleteContact(0)
         self._controller.loadContact()
@@ -57,17 +55,15 @@ class ListWidget(QDialog):
     # selected_element variable is updated.
     @pyqtSlot(QTreeWidgetItem, int)
     def upload_selected_element(self, item, column):
-        root = self.ui.contactList.invisibleRootItem()
-        child_count = root.childCount()
-        selected = []
-        for i in range(child_count):
-            item = root.child(i)
-            if (item.checkState(0) == Qt.Checked):
-                self._controller.upload_selected_element(item)
+        selected = {}
+        for i in range(self.ui.contactList.invisibleRootItem().childCount()):
+            item = self.ui.contactList.invisibleRootItem().child(i)
+            selected[str(id(item))] =  [True if item.checkState(0) == Qt.Checked else False]
+        self._controller.upload_selected_element(selected)
 
-    @pyqtSlot(int)
-    def delete_contact(self, contact_id):
-        print(contact_id)
-        self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
-        self.ui.contactList.setColumnHidden(0, not self.ui.contactList.isColumnHidden(0))
-        #self.ui.annotationList.takeTopLevelItem(contact_id)
+
+    @pyqtSlot()
+    def delete_item(self):
+        self.ui.contactList.clear()
+        self._controller.refreshList()
+        self.enableEdit()

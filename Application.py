@@ -12,9 +12,8 @@ DIR_NAME = os.path.dirname(os.path.abspath('__file__'))
 
 
 app = QApplication(sys.argv)
-model = Model()
-controller = Controller(model)
-window = ContactManager(model, controller)
+
+window = ContactManager()
 window.show()
 app.exec_()
 sys.exit()
