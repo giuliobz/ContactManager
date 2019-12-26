@@ -3,6 +3,7 @@ from Build.Ui_ContactWidget import Ui_ContactWidget
 
 from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem
+from PyQt5.QtGui import QImage, QPixmap
 
 # Window that contain all the clips in annotation buffer with the correlated preferencies
 class ContactWindow(QDialog):

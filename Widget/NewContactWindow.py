@@ -1,8 +1,10 @@
-from Build.Ui_NewContactWidget import Ui_NewContactWidget
+import cv2
 
+from Build.Ui_NewContactWidget import Ui_NewContactWidget
 
 from PyQt5.Qt import pyqtSlot, Qt
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtGui import QImage, QPixmap
 
 # Window that contain all the clips in annotation buffer with the correlated preferencies
 class NewContactWindow(QDialog):
@@ -21,6 +23,12 @@ class NewContactWindow(QDialog):
         self.ui.saveButton.clicked.connect(self.insertContact)
         self.ui.resetButton.clicked.connect(self.resetButton)
         self.ui.backButton.clicked.connect(lambda : self.close())
+
+        # Set default image
+        h, w, ch = cv2.imread('Build/contact_2.png').shape
+        bytesPerLine = ch * w
+        convertToQtFormat = QImage(cv2.imread('Build/contact_2.png'), w, h, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
+        self.ui.photo.setPixmap(QPixmap.fromImage(convertToQtFormat))
 
     def insertContact(self):
         contactInfo = {}
