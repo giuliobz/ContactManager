@@ -2,7 +2,7 @@ import cv2
 
 from Build.Ui_NewContactWidget import Ui_NewContactWidget
 
-from PyQt5.Qt import pyqtSlot, Qt
+from PyQt5.Qt import pyqtSlot, Qt, pyqtSignal, QObject
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QImage, QPixmap
 
@@ -13,7 +13,8 @@ class NewContactWindow(QDialog):
         super().__init__()
 
         # connect controller and model
-        self._controller = controller
+        self._model = NewContactWindowModel()
+        self._on_configure = controller.insertNewContact
 
         # Set up the user interface from Designer.
         self.ui = Ui_NewContactWidget()
@@ -24,10 +25,11 @@ class NewContactWindow(QDialog):
         self.ui.resetButton.clicked.connect(self.resetButton)
         self.ui.backButton.clicked.connect(lambda : self.close())
 
-        # Set default image
-        h, w, ch = cv2.imread('Build/contact_2.png').shape
+        # Set default image. In this case is easier to put toghether thw controller and the view
+        # and have a model that have inside the contact image
+        h, w, ch = cv2.imread(self._model.contactImage).shape
         bytesPerLine = ch * w
-        convertToQtFormat = QImage(cv2.imread('Build/contact_2.png'), w, h, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
+        convertToQtFormat = QImage(cv2.imread(self._model.contactImage), w, h, bytesPerLine, QImage.Format_RGB888).rgbSwapped()
         self.ui.photo.setPixmap(QPixmap.fromImage(convertToQtFormat))
 
     def insertContact(self):
@@ -42,7 +44,7 @@ class NewContactWindow(QDialog):
             if(self.ui.tagsList.invisibleRootItem().child(i).checkState(0) == Qt.Checked):
                 contactInfo['tags'].append(self.ui.tagsList.invisibleRootItem().child(i).text(0))
         
-        self._controller.insertNewContact(contactInfo)
+        self._on_configure(contactInfo)
         self.close()
         
     def resetButton(self):
@@ -55,4 +57,22 @@ class NewContactWindow(QDialog):
         for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
             if(self.ui.tagsList.invisibleRootItem().child(i).checkState(0) == Qt.Checked):
                self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Unchecked)
-            
+
+    def changeImage(self):
+        pass
+
+class NewContactWindowModel(QObject):
+
+    def __init__(self):
+        super().__init__()
+
+        # Define the image path
+        self._contactImage = 'Build/contact_2.png'
+
+    @property
+    def contactImage(self):
+        return self._contactImage
+    
+    @contactImage.setter
+    def contactImage(self, image):
+        self._contactImage = image
