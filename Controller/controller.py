@@ -19,13 +19,6 @@ class Controller(QObject):
         self._model = model
 
 
-    @pyqtSlot(str)
-    def changeWindow(self, slot):
-        if slot == 'add':
-            self._model.currentWidget = self._model.button_view[slot](self)
-        elif slot == 'back':
-            self._model.currentWidget = self._model.button_view[slot](self._model, self)
-
     @pyqtSlot(dict)
     def insertNewContact(self, newContact):
         contact = QTreeWidgetItem()
@@ -40,7 +33,6 @@ class Controller(QObject):
     def loadContact(self):
 
         contacts = self._model._database.getContacts()
-        print(contacts)
         contactInfo = {}
         for contact in contacts:
 
@@ -67,12 +59,10 @@ class Controller(QObject):
         
         identifier = [identifier for identifier in self._model.selected_element.keys() if self._model.selected_element[identifier][0]]
         idx = [self._model.indexTable[i] for i in identifier]
-        print(idx)
         self._model.currentContactList = [idx]
 
     @pyqtSlot()
     def refreshList(self):
-        print(self._model.currentContactList)
         for id in self._model.currentContactList.keys():
             contact = QTreeWidgetItem()
             contact.setCheckState(0, Qt.Unchecked)

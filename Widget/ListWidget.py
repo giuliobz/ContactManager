@@ -2,6 +2,8 @@ import csv
 
 from Build.Ui_ListWidget import Ui_Form
 
+from Widget.NewContactWindow import NewContactWindow
+
 from Widget.ContactButton import ContactButton
 
 from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
@@ -26,7 +28,7 @@ class ListWidget(QDialog):
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
 
         # Define Add Button
-        self.ui.addButton.clicked.connect(lambda : self._controller.changeWindow('add'))
+        self.ui.addButton.clicked.connect(lambda : NewContactWindow(self._controller).exec_())
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
         self.ui.deleteButton.clicked.connect(lambda : self._controller.deleteContacts())
         self.ui.contactList.itemChanged.connect(self.upload_selected_element)

@@ -3,9 +3,6 @@ import sys
 
 from Database.database import Database
 
-from Widget.ListWidget import ListWidget
-from Widget.NewContactWindow import NewContactWindow
-from Widget.ContactWindow import ContactWindow
 
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QTimer
 from PyQt5.QtWidgets import QWidget
@@ -15,18 +12,9 @@ DIR_NAME = os.path.dirname(os.path.abspath('__file__'))
 class Model(QObject):
     insertElementSygnal = pyqtSignal(list)
     deleteElementsSygnal = pyqtSignal()
-    changeCentralWidgetSignal = pyqtSignal(QWidget)
 
     def __init__(self):
         super().__init__()
-
-        # Define button behaviour. Add button in listWidget, back button in newCentralWidget and contactWidget 
-        # and the button in QTreeWidget have to open specific window. So controller has to know witch widget has to create and put 
-        # like current widget and central widget in ContactManagerVie.
-        self._button_view = {'add' : NewContactWindow, 'back' : ListWidget, 'buttonWidget' : ContactWindow}
-
-        # Define the list Widget and current widget displayed
-        self._currentWidget = None
 
         # Define the variable of selected element in edit mode.
         # the key is the item identifier and the value is
@@ -46,14 +34,6 @@ class Model(QObject):
         self._id = 0
 
     @property
-    def button_view(self):
-        return self._button_view
-
-    @property
-    def currentWidget(self):
-        return self._currentWidget
-
-    @property
     def selected_element(self):
         return self._selected_element
     
@@ -68,11 +48,6 @@ class Model(QObject):
     @property
     def id(self):
         return self._id
-
-    @currentWidget.setter
-    def currentWidget(self, slot):
-        self._currentWidget = slot
-        self.changeCentralWidgetSignal.emit(self._currentWidget)
 
     @id.setter
     def id(self, slot):
@@ -109,10 +84,11 @@ class Model(QObject):
         else:
             
             for contact in newContact[0]:
-
+                
                 del self._currentContactList[contact]
                 self._database.deleteContact(contact)
             
             self.deleteElementsSygnal.emit()
             self._selected_element = []
+
 

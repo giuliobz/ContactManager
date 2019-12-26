@@ -5,7 +5,7 @@ class Database:
     def __init__(self):
         super().__init__()
 
-        self.connection = sqlite3.connect("database.db")
+        self.connection = sqlite3.connect("Database/database.db")
         self.cursor = self.connection.cursor()
         self.connection.execute("CREATE TABLE IF NOT EXISTS CONTACTS(C_ID TEXT, FIRST_NAME TEXT, LAST_NAME TEXT, TELEPHONE TEXT, EMAIL TEXT, NOTES TEXT, TAGS TEXT)")
         self.connection.commit()

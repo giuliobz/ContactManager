@@ -20,7 +20,7 @@ class NewContactWindow(QDialog):
         # Connect button
         self.ui.saveButton.clicked.connect(self.insertContact)
         self.ui.resetButton.clicked.connect(self.resetButton)
-        self.ui.backButton.clicked.connect(lambda : self._controller.changeWindow('back'))
+        self.ui.backButton.clicked.connect(lambda : self.close())
 
     def insertContact(self):
         contactInfo = {}
@@ -35,8 +35,8 @@ class NewContactWindow(QDialog):
                 contactInfo['tags'].append(self.ui.tagsList.invisibleRootItem().child(i).text(0))
         
         self._controller.insertNewContact(contactInfo)
-        self._controller.changeWindow('back')
-
+        self.close()
+        
     def resetButton(self):
         
         self.ui.nameLine.setText('')
