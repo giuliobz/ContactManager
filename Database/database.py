@@ -18,6 +18,7 @@ class Database:
         self.connection.execute("INSERT INTO CONTACTS VALUES(?,?,?,?,?,?,?,?)", (id, image_path, first_name, last_name, telephone, e_mail, notes, tags))
         cv2.imwrite(image_path, cv2.imread(photo))
         self.connection.commit()
+        return image_path
 
     # get all contact of the database order by name
     def getContacts(self):

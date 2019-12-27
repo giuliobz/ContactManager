@@ -17,6 +17,11 @@ class ListWidget(QDialog):
         self._model = model
         self._controller = controller
 
+        # Define the variable of selected element in edit mode.
+        # the key is the item identifier and the value is
+        # the item QCheckBox current value.
+        self._selected = {}
+
         # Set up the user interface from Designer.
         self.ui = Ui_Form()
         self.ui.setupUi(self)
@@ -29,12 +34,11 @@ class ListWidget(QDialog):
         #self.ui.addButton.clicked.connect(lambda : NewContactWindow(self._model.currentContactList, self._controller).exec_())
         self.ui.addButton.clicked.connect(lambda : self.addButtonFunc())
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
-        self.ui.deleteButton.clicked.connect(lambda : self._controller.deleteContacts())
+        self.ui.deleteButton.clicked.connect(lambda : self.delete_item())
         self.ui.contactList.itemChanged.connect(self.upload_selected_element)
 
         # connect list to the model
         self._model.insertElementSygnal.connect(self.add_contact)
-        self._model.deleteElementsSygnal.connect(self.delete_item)
 
         # Load the current contact in list
         self._controller.loadContact()
@@ -58,15 +62,15 @@ class ListWidget(QDialog):
     # selected_element variable is updated.
     @pyqtSlot(QTreeWidgetItem, int)
     def upload_selected_element(self, item, column):
-        selected = {}
         for i in range(self.ui.contactList.invisibleRootItem().childCount()):
             item = self.ui.contactList.invisibleRootItem().child(i)
-            selected[str(id(item))] =  [True if item.checkState(0) == Qt.Checked else False]
-        self._controller.upload_selected_element(selected)
+            self._selected[str(id(item))] =  [True if item.checkState(0) == Qt.Checked else False]
 
 
     @pyqtSlot()
     def delete_item(self):
+        self._controller.deleteContacts(self._selected)
         self.ui.contactList.clear()
         self._controller.refreshList()
         self.enableEdit()
+        self._selected = {}

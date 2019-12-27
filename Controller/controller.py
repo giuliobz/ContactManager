@@ -40,12 +40,13 @@ class Controller(QObject):
     def loadContact(self):
 
         contacts = self._model._database.getContacts()
-        contactInfo = {}
         idx = 0
         for contact in contacts:
 
             if idx < int(contact[0]):
                 idx = int(contact[0])
+
+            contactInfo = {}
 
             contactInfo['id'] = int(contact[0])
             contactInfo['photo'] = (contact[1])
@@ -59,14 +60,9 @@ class Controller(QObject):
         
         self._model.id = idx + 1
             
-    @pyqtSlot(list)
-    def upload_selected_element(self, selected):
-            self._model.selected_element = selected
-
-    @pyqtSlot()
-    def deleteContacts(self):
-        
-        identifier = [identifier for identifier in self._model.selected_element.keys() if self._model.selected_element[identifier][0]]
+    @pyqtSlot(dict)
+    def deleteContacts(self, selected_element):
+        identifier = [identifier for identifier in selected_element.keys() if selected_element[identifier][0]]
         idx = [self._model.indexTable[i] for i in identifier]
         self._model.currentContactList = [idx]
 

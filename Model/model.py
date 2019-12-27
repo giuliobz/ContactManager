@@ -11,7 +11,6 @@ DIR_NAME = os.path.dirname(os.path.abspath('__file__'))
 
 class Model(QObject):
     insertElementSygnal = pyqtSignal(list)
-    deleteElementsSygnal = pyqtSignal()
     changeCentralWidgetSignal = pyqtSignal(object)
 
     def __init__(self):
@@ -19,11 +18,6 @@ class Model(QObject):
 
         # Define the current central widget
         self._currentCentralWidget = None
-
-        # Define the variable of selected element in edit mode.
-        # the key is the item identifier and the value is
-        # the item QCheckBox current value.
-        self._selected_element = {}
 
         # Define list variable, is a dictonary where a id correspond a contact.
         self._currentContactList = {}
@@ -40,10 +34,6 @@ class Model(QObject):
     @property
     def currentCentralWidget(self):
         return self._currentCentralWidget
-
-    @property
-    def selected_element(self):
-        return self._selected_element
     
     @property
     def currentContactList(self):
@@ -67,10 +57,6 @@ class Model(QObject):
     def id(self, slot):
        self._id = slot
 
-    @selected_element.setter
-    def selected_element(self, slot):
-        self._selected_element = slot
-
     # In this case slot[0] is the item identifier and slot[1] is the id
     @indexTable.setter
     def indexTable(self, slot):
@@ -83,14 +69,15 @@ class Model(QObject):
 
         if isinstance(newContact[0], dict) and 'id' not in newContact[0].keys():
 
+            newContact[0]['photo'] = self._database.saveContact(self._id, newContact[0]['photo'], newContact[0]['name'], newContact[0]['secondName'], newContact[0]['phone'], newContact[0]['mail'], newContact[0]['notes'], newContact[0]['tags'])
             self._currentContactList[self._id] = newContact[0]
-            self._database.saveContact(self._id, newContact[0]['photo'], newContact[0]['name'], newContact[0]['secondName'], newContact[0]['phone'], newContact[0]['mail'], newContact[0]['notes'], newContact[0]['tags'])
             self.insertElementSygnal.emit([newContact[0]['name'] + ' ' + newContact[0]['secondName'], newContact[1], newContact[2]])
             self._id += 1
 
         elif isinstance(newContact[0], dict) and 'id' in newContact[0].keys() and  newContact[0]['id'] not in self._currentContactList.keys():
 
-            self._currentContactList[ newContact[0]['id']] = newContact[0]
+            self._currentContactList[newContact[0]['id']] = newContact[0]
+            newContact[0] = {i : newContact[0][i] for i in newContact[0].keys() if i != 'id'}
             self.insertElementSygnal.emit([newContact[0]['name'] + ' ' + newContact[0]['secondName'], newContact[1], newContact[2]])
 
         elif isinstance(newContact[0], dict) and 'id' in newContact[0].keys() and newContact[0]['id'] in self._currentContactList.keys():
@@ -102,9 +89,8 @@ class Model(QObject):
             for contact in newContact[0]:
                 
                 self._database.deleteContact(contact, self._currentContactList[contact]['photo'])
-                self._currentContactList.pop(contact)
-            
-            self.deleteElementsSygnal.emit()
-            self._selected_element = []
+                self._currentContactList = {i:self._currentContactList[i] for i in self._currentContactList.keys() if i!=int(contact)}
+                
+
 
 
