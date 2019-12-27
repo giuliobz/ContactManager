@@ -22,6 +22,11 @@ class ContactManager(QMainWindow):
         self.ui.setupUi(self)
 
         # Connect model signal with the view   
+        self._model.changeCentralWidgetSignal.connect(self.changeCentralWidget)
+
+        # Set starting central widget
         self.setCentralWidget(ListWidget(self._model, self._controller))
 
-        
+    @pyqtSlot(object)
+    def changeCentralWidget(self, widget):
+        self.setCentralWidget(widget)

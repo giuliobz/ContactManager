@@ -12,9 +12,13 @@ DIR_NAME = os.path.dirname(os.path.abspath('__file__'))
 class Model(QObject):
     insertElementSygnal = pyqtSignal(list)
     deleteElementsSygnal = pyqtSignal()
+    changeCentralWidgetSignal = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
+
+        # Define the current central widget
+        self._currentCentralWidget = None
 
         # Define the variable of selected element in edit mode.
         # the key is the item identifier and the value is
@@ -32,6 +36,10 @@ class Model(QObject):
 
         # Define the id counter
         self._id = 0
+    
+    @property
+    def currentCentralWidget(self):
+        return self._currentCentralWidget
 
     @property
     def selected_element(self):
@@ -48,6 +56,12 @@ class Model(QObject):
     @property
     def id(self):
         return self._id
+
+    @currentCentralWidget.setter
+    def currentCentralWidget(self, slot):
+        self._currentCentralWidget = slot
+        self.changeCentralWidgetSignal.emit(slot)
+        
 
     @id.setter
     def id(self, slot):
@@ -74,11 +88,13 @@ class Model(QObject):
             self.insertElementSygnal.emit([newContact[0]['name'] + ' ' + newContact[0]['secondName'], newContact[1], newContact[2]])
             self._id += 1
 
-        elif isinstance(newContact[0], dict) and 'id' in newContact[0].keys():
+        elif isinstance(newContact[0], dict) and 'id' in newContact[0].keys() and  newContact[0]['id'] not in self._currentContactList.keys():
+
+            self._currentContactList[ newContact[0]['id']] = newContact[0]
+            self.insertElementSygnal.emit([newContact[0]['name'] + ' ' + newContact[0]['secondName'], newContact[1], newContact[2]])
+
+        elif isinstance(newContact[0], dict) and 'id' in newContact[0].keys() and newContact[0]['id'] in self._currentContactList.keys():
             
-            id =  int(newContact[0]['id'])
-            del newContact[0]['id']
-            self._currentContactList[id] = newContact[0]
             self.insertElementSygnal.emit([newContact[0]['name'] + ' ' + newContact[0]['secondName'], newContact[1], newContact[2]])
 
         else:
@@ -86,7 +102,7 @@ class Model(QObject):
             for contact in newContact[0]:
                 
                 self._database.deleteContact(contact, self._currentContactList[contact]['photo'])
-                del self._currentContactList[contact]
+                self._currentContactList.pop(contact)
             
             self.deleteElementsSygnal.emit()
             self._selected_element = []

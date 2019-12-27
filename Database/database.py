@@ -35,5 +35,3 @@ class Database:
         os.remove(photo)
         self.connection.commit()
 
-    
-

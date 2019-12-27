@@ -1,6 +1,7 @@
 import os 
 import sys
 
+from Widget.ListWidget import ListWidget
 from Widget.NewContactWindow import NewContactWindow
 from Widget.ContactWindow import ContactWindow
 
@@ -18,6 +19,12 @@ class Controller(QObject):
         # Connect the model
         self._model = model
 
+    def changeCentralWidget(self, widget):
+        if widget == 'newContact':
+            self._model.currentCentralWidget = NewContactWindow(self._model.currentContactList, self)
+        else:
+            self._model.currentCentralWidget = ListWidget(self._model, self)
+
 
     @pyqtSlot(dict)
     def insertNewContact(self, newContact):
@@ -34,12 +41,12 @@ class Controller(QObject):
 
         contacts = self._model._database.getContacts()
         contactInfo = {}
+        idx = 0
         for contact in contacts:
 
-            if self._model.id < int(contact[0]):
-                self._model.id = int(contact[0])
+            if idx < int(contact[0]):
+                idx = int(contact[0])
 
-            
             contactInfo['id'] = int(contact[0])
             contactInfo['photo'] = (contact[1])
             contactInfo['name'] = contact[2]
@@ -50,7 +57,7 @@ class Controller(QObject):
             contactInfo['tags'] = contact[7].split('/')
             self.insertNewContact(contactInfo)
         
-        self._model.id = self._model.id + 1
+        self._model.id = idx + 1
             
     @pyqtSlot(list)
     def upload_selected_element(self, selected):

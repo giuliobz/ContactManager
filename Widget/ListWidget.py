@@ -2,8 +2,6 @@ import csv
 
 from Build.Ui_ListWidget import Ui_Form
 
-from Widget.NewContactWindow import NewContactWindow
-
 from Widget.ContactButton import ContactButton
 
 from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
@@ -28,28 +26,31 @@ class ListWidget(QDialog):
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
 
         # Define Add Button
-        self.ui.addButton.clicked.connect(lambda : NewContactWindow(self._controller).exec_())
+        #self.ui.addButton.clicked.connect(lambda : NewContactWindow(self._model.currentContactList, self._controller).exec_())
+        self.ui.addButton.clicked.connect(lambda : self.addButtonFunc())
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
         self.ui.deleteButton.clicked.connect(lambda : self._controller.deleteContacts())
         self.ui.contactList.itemChanged.connect(self.upload_selected_element)
 
         # connect list to the model
-        self._model.insertElementSygnal.connect(self.add_annotation)
+        self._model.insertElementSygnal.connect(self.add_contact)
         self._model.deleteElementsSygnal.connect(self.delete_item)
 
-        #self._model._database.deleteContact(0)
+        # Load the current contact in list
         self._controller.loadContact()
     
+    def addButtonFunc(self):
+        self._controller.changeCentralWidget('newContact')
+
     def enableEdit(self):
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
         self.ui.contactList.setColumnHidden(0, not self.ui.contactList.isColumnHidden(0))
 
-
     # Add new anotation to QTreeWidget
     # NewContaact is a list where the first element is the name and the second element is 
     # a ContactWindow associated with the contact...
-    @pyqtSlot(list)#QTreeWidgetItem
-    def add_annotation(self, newContact):
+    @pyqtSlot(list)
+    def add_contact(self, newContact):
         self.ui.contactList.addTopLevelItem(newContact[2])
         self.ui.contactList.setItemWidget(newContact[2], 1, ContactButton(newContact[0], newContact[1]))
 
