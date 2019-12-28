@@ -2,13 +2,11 @@
 
 # Form implementation generated from reading ui file 'ListWidget.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -84,3 +82,4 @@ class Ui_Form(object):
         self.deleteButton.setText(_translate("Form", "Delete"))
         self.contactList.headerItem().setText(0, _translate("Form", "Select to delete"))
         self.contactList.headerItem().setText(1, _translate("Form", "Contact list"))
+

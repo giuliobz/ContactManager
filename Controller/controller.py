@@ -22,19 +22,21 @@ class Controller(QObject):
     def changeCentralWidget(self, widget):
         if widget == 'newContact':
             self._model.currentCentralWidget = NewContactWindow(self._model.currentContactList, self)
-        else:
+        elif widget == 'list':
             self._model.currentCentralWidget = ListWidget(self._model, self)
+        else:
+            self._model.currentCentralWidget = ContactWindow()
 
 
     @pyqtSlot(dict)
     def insertNewContact(self, newContact):
         contact = QTreeWidgetItem()
         contact.setCheckState(0, Qt.Unchecked)
-        contactWindow = ContactWindow(newContact, self)
+        contactWindow = ContactWindow(self._model.id, newContact, self)
         newContact['tags'] = '/'.join(newContact['tags'])
         identifier = str(id(contact))
-        self._model.indexTable = [identifier, self._model.id] if 'id' not in newContact.keys() else [identifier, newContact['id']]
-        self._model.currentContactList = [newContact, contactWindow, contact]
+        self._model.indexTable = [identifier, self._model.id]
+        self._model.currentContactList = ['insert', newContact, contactWindow, contact]
     
     @pyqtSlot()
     def loadContact(self):
@@ -56,7 +58,13 @@ class Controller(QObject):
             contactInfo['mail'] = contact[5]
             contactInfo['notes'] = contact[6]
             contactInfo['tags'] = contact[7].split('/')
-            self.insertNewContact(contactInfo)
+            contact = QTreeWidgetItem()
+            contact.setCheckState(0, Qt.Unchecked)
+            contactWindow = ContactWindow(contactInfo['id'],contactInfo, self)
+            contactInfo['tags'] = '/'.join(contactInfo['tags'])
+            identifier = str(id(contact))
+            self._model.indexTable = [identifier, contactInfo['id']]
+            self._model.currentContactList = ['load', contactInfo, contactWindow, contact]
         
         self._model.id = idx + 1
             
@@ -64,23 +72,19 @@ class Controller(QObject):
     def deleteContacts(self, selected_element):
         identifier = [identifier for identifier in selected_element.keys() if selected_element[identifier][0]]
         idx = [self._model.indexTable[i] for i in identifier]
-        self._model.currentContactList = [idx]
+        self._model.currentContactList = ['delete', idx]
 
     @pyqtSlot()
     def refreshList(self):
         for id in self._model.currentContactList.keys():
             contact = QTreeWidgetItem()
             contact.setCheckState(0, Qt.Unchecked)
-            contactWindow = ContactWindow(self._model.currentContactList[id], self)
+            contactWindow = ContactWindow(id, self._model.currentContactList[id], self)
             self._model.insertElementSygnal.emit([self._model.currentContactList[id]['name'] + ' ' + self._model.currentContactList[id]['secondName'], contactWindow, contact])
-        
+
     
-
-
-
-        
-    
-            
-                
-        
-            
+    @pyqtSlot(dict)
+    def updateContact(self, contactInfo):
+        idx = contactInfo['idx']
+        contactInfo = {i : contactInfo[i] for i in contactInfo.keys() if i != 'id'}
+        self._model.currentContactList = ['update', contactInfo, idx]

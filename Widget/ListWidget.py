@@ -38,8 +38,8 @@ class ListWidget(QDialog):
         self.ui.contactList.itemChanged.connect(self.upload_selected_element)
 
         # connect list to the model
-        self._model.insertElementSygnal.connect(self.add_contact)
-
+        self._model.insertElementSignal.connect(self.add_contact)
+        self._model.updateContactSignal.connect(self.refresh)
         # Load the current contact in list
         self._controller.loadContact()
     
@@ -70,6 +70,10 @@ class ListWidget(QDialog):
     @pyqtSlot()
     def delete_item(self):
         self._controller.deleteContacts(self._selected)
+        self.refresh()
+
+    @pyqtSlot()
+    def refresh(self):
         self.ui.contactList.clear()
         self._controller.refreshList()
         self.enableEdit()

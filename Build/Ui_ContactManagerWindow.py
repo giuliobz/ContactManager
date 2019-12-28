@@ -2,13 +2,11 @@
 
 # Form implementation generated from reading ui file 'ContactManagerWindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_ContactManager(object):
     def setupUi(self, ContactManager):
@@ -63,3 +61,4 @@ class Ui_ContactManager(object):
         self.action_Quit_2.setText(_translate("ContactManager", "&Quit"))
         self.action_Edit.setText(_translate("ContactManager", "&Quit"))
         self.action_About_2.setText(_translate("ContactManager", "&About"))
+

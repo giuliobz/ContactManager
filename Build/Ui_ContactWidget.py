@@ -2,13 +2,11 @@
 
 # Form implementation generated from reading ui file 'ContactWidget.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_ContactWidget(object):
     def setupUi(self, ContactWidget):
@@ -135,9 +133,6 @@ class Ui_ContactWidget(object):
         self.saveButton = QtWidgets.QPushButton(self.buttonWidget)
         self.saveButton.setObjectName("saveButton")
         self.horizontalLayout_2.addWidget(self.saveButton)
-        self.resetButton = QtWidgets.QPushButton(self.buttonWidget)
-        self.resetButton.setObjectName("resetButton")
-        self.horizontalLayout_2.addWidget(self.resetButton)
         self.backButton = QtWidgets.QPushButton(self.buttonWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -174,7 +169,6 @@ class Ui_ContactWidget(object):
         self.tagsList.topLevelItem(6).setText(0, _translate("ContactWidget", "professor"))
         self.tagsList.topLevelItem(7).setText(0, _translate("ContactWidget", "work"))
         self.tagsList.setSortingEnabled(__sortingEnabled)
-        self.saveButton.setText(_translate("ContactWidget", "Save"))
-        self.resetButton.setText(_translate("ContactWidget", "Reset"))
+        self.saveButton.setText(_translate("ContactWidget", "Save changes"))
         self.backButton.setText(_translate("ContactWidget", "Back"))
 

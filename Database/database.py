@@ -27,7 +27,9 @@ class Database:
     
     # update a contact with new data
     def updateContact(self, photo, first_name, last_name, telephone, email, notes, tags, id):
+        image_path = 'Database/imageDatabase/' + first_name + '_' + last_name + '.png'
         self.connection.execute("""UPDATE CONTACTS SET PHOTO=?, FIRST_NAME=?, LAST_NAME=?,TELEPHONE=?, EMAIL=?, NOTES=?, TAGS=? WHERE C_ID=?""", (photo, first_name,last_name,telephone,email ,notes, tags, id))
+        cv2.imwrite(image_path, cv2.imread(photo))
         self.connection.commit()
 
     #delete a contact
