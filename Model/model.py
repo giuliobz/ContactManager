@@ -68,10 +68,12 @@ class Model(QObject):
     @currentContactList.setter
     def currentContactList(self, newContact):
 
+
         if 'insert' in newContact[0] and 'id' not in newContact[1].keys():
 
             newContact[1]['photo'] = self._database.saveContact(self._id, newContact[1]['photo'], newContact[1]['name'], newContact[1]['secondName'], newContact[1]['phone'], newContact[1]['mail'], newContact[1]['notes'], newContact[1]['tags'])
             self._currentContactList[self._id] = newContact[1]
+            newContact[1] = {i : newContact[1][i] for i in newContact[1].keys() if i != 'id'}
             self.insertElementSignal.emit([newContact[1]['name'] + ' ' + newContact[1]['secondName'], newContact[2], newContact[3]])
             self._id += 1
 
@@ -87,7 +89,7 @@ class Model(QObject):
             self.insertElementSignal.emit([newContact[1]['name'] + ' ' + newContact[1]['secondName'], newContact[2], newContact[3]])
 
         elif 'update' in newContact[0]:
-
+            
             self._database.updateContact(newContact[1]['photo'], newContact[1]['name'], newContact[1]['secondName'], newContact[1]['phone'], newContact[1]['mail'], newContact[1]['notes'], newContact[1]['tags'], newContact[2])
             self.updateContactSignal.emit()
 
@@ -97,6 +99,11 @@ class Model(QObject):
                 
                 self._database.deleteContact(contact, self._currentContactList[contact]['photo'])
                 self._currentContactList = {i:self._currentContactList[i] for i in self._currentContactList.keys() if i!=int(contact)}
+
+        elif 'search' in newContact[0]:
+            print(newContact[1])
+            self.insertElementSignal.emit([newContact[1]['name'] + ' ' + newContact[1]['secondName'], newContact[2], newContact[3]])
+
                 
 
 

@@ -26,14 +26,17 @@ class ListWidget(QDialog):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
 
-        # Hide first column and delete botton
+        # Hide first column and delete button
         self.ui.contactList.hideColumn(0)
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
 
-        # Define Add Button
+        # Connect button behaviour
         self.ui.addButton.clicked.connect(lambda : self.addButtonFunc())
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
         self.ui.deleteButton.clicked.connect(lambda : self.delete_item())
+        self.ui.searchButton.clicked.connect(lambda : self.search())
+
+        # Connect list to item change signal
         self.ui.contactList.itemChanged.connect(self.upload_selected_element)
 
         # connect list to the model
@@ -42,7 +45,31 @@ class ListWidget(QDialog):
 
         # Load the current contact in list
         self._controller.loadContact()
-    
+
+    def search(self):
+        if self.ui.searchButton.text() != 'Cancel search':
+        
+            if self.ui.nameLine.text() != '' and self.ui.tagSearch.currentText() != '-- all --':
+                self.ui.contactList.clear()
+                self._controller.search(['both', self.ui.nameLine.text(), self.ui.tagSearch.currentText()])
+                self.ui.searchButton.setText('Cancel search')
+            elif self.ui.nameLine.text() != '' and self.ui.tagSearch.currentText() == '-- all --':
+                self.ui.contactList.clear()
+                self._controller.search(['string', self.ui.nameLine.text()])
+                self.ui.searchButton.setText('Cancel search')
+            elif self.ui.nameLine.text() == '' and self.ui.tagSearch.currentText() != '-- all --':
+                self.ui.contactList.clear()
+                self._controller.search(['tag', self.ui.tagSearch.currentText()])
+                self.ui.searchButton.setText('Cancel search')
+        
+        else:
+            self.ui.contactList.clear()
+            self.ui.nameLine.setText('')
+            self.ui.tagSearch.setCurrentIndex(0)
+            self._controller.loadContact()
+
+            
+
     def addButtonFunc(self):
         self._controller.changeCentralWidget('newContact')
 
