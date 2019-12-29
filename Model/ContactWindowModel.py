@@ -42,9 +42,9 @@ class ContactWindowModel(QObject):
         return self._is_changed
     
     @property
-    def foto(self):
+    def photo(self):
         if 'photo' in self._newContactInfo:
-            return self._newContactInfo['foto']
+            return self._newContactInfo['photo']
         return ''
     
     @property
@@ -83,12 +83,12 @@ class ContactWindowModel(QObject):
             return self._newContactInfo['tags']
         return []
     
-    @foto.setter
-    def foto(self, foto):
-        self._newContactInfo['foto'] = foto
-        if self._newContactInfo['foto'] == self._currentContactInfo['photo']:
-            del self._newContactInfo['foto']
-        self.contactChangedSignal.emit(['foto', foto])
+    @photo.setter
+    def photo(self, photo):
+        self._newContactInfo['photo'] = photo
+        if self._newContactInfo['photo'] == self._currentContactInfo['photo']:
+            del self._newContactInfo['photo']
+        self.contactChangedSignal.emit(['photo', photo])
     
     @name.setter
     def name(self, name):

@@ -70,7 +70,9 @@ class ContactWindowController(QObject):
             if (msgBox.exec_() == QMessageBox.Ok):
                 self._model.closeWindowSignal.emit()
         
-        self._model.closeWindowSignal.emit()
+        else:
+            
+            self._model.closeWindowSignal.emit()
         
 
     @pyqtSlot()
@@ -79,16 +81,16 @@ class ContactWindowController(QObject):
         options |= QFileDialog.DontUseNativeDialog
         fileName = QFileDialog.getOpenFileName(caption='Open file', filter="Image files (*.jpg *.gif *.png)", options=options)
         if '.png' in fileName[0] or '.jpg' in fileName[0] or '.gif' in fileName[0]:
-            self._model.foto = fileName[0]
+            self._model.photo = fileName[0]
 
     @pyqtSlot()
     def resetImage(self):
-        self._model.foto = self._model.currentContactInfo['photo']
+        self._model.photo = self._model.currentContactInfo['photo']
     
 
     @pyqtSlot()
     def deleteImage(self):
-        self._model.foto = 'Build/contact_2.png'
+        self._model.photo = 'Build/contact_2.png'
 
     @pyqtSlot()
     def changeContactInfo(self):

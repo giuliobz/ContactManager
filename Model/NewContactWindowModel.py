@@ -29,7 +29,7 @@ class NewContactWindowModel(QObject):
         return self._contactInfo
 
     @property
-    def foto(self):
+    def photo(self):
         return self._contactInfo['photo']
   
     
@@ -70,10 +70,10 @@ class NewContactWindowModel(QObject):
         self._contactInfo = slot
         self.resetSignal.emit()
     
-    @foto.setter
-    def foto(self, foto):
-        self._contactInfo['foto'] = foto
-        self.contactChangedSignal.emit(['foto', foto])
+    @photo.setter
+    def photo(self, photo):
+        self._contactInfo['photo'] = photo
+        self.contactChangedSignal.emit(['photo', photo])
     
     @name.setter
     def name(self, name):

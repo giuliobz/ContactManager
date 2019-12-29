@@ -66,30 +66,6 @@ class ListWidget(QDialog):
     def searchContact(self):
         self.ui.contactList.clear()
         self._controller.search()
-
-        '''
-        if self.ui.searchButton.text() != 'Cancel search':
-        
-            if self.ui.nameLine.text() != '' and self.ui.tagSearch.currentText() != '-- all --':
-                self.ui.contactList.clear()
-                self._controller.search(['both', self.ui.nameLine.text(), self.ui.tagSearch.currentText()])
-                self.ui.searchButton.setText('Cancel search')
-            elif self.ui.nameLine.text() != '' and self.ui.tagSearch.currentText() == '-- all --':
-                self.ui.contactList.clear()
-                self._controller.search(['string', self.ui.nameLine.text()])
-                self.ui.searchButton.setText('Cancel search')
-            elif self.ui.nameLine.text() == '' and self.ui.tagSearch.currentText() != '-- all --':
-                self.ui.contactList.clear()
-                self._controller.search(['tag', self.ui.tagSearch.currentText()])
-                self.ui.searchButton.setText('Cancel search')
-        
-        else:
-
-            self.ui.contactList.clear()
-            self.ui.nameLine.setText('')
-            self.ui.tagSearch.setCurrentIndex(0)
-            self._controller.loadContact()
-        '''
             
 
     def addButtonFunc(self):

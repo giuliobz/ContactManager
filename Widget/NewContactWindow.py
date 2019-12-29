@@ -6,7 +6,7 @@ from Build.Ui_NewContactWidget import Ui_NewContactWidget
 
 from PyQt5.Qt import pyqtSlot, Qt, pyqtSignal, QObject
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QIntValidator
 
 # Window that contain all the clips in annotation buffer with the correlated preferencies
 class NewContactWindow(QDialog):
@@ -21,6 +21,7 @@ class NewContactWindow(QDialog):
         # Set up the user interface from Designer.
         self.ui = Ui_NewContactWidget()
         self.ui.setupUi(self)
+        self.ui.telephoneLine.setValidator(QIntValidator(0, 2147483647, self))
 
         # Connect button
         self.ui.saveButton.clicked.connect(self._controller.insertContact)
@@ -65,7 +66,7 @@ class NewContactWindow(QDialog):
 
     @pyqtSlot(list)
     def changeContact(self, slot):
-        if slot[0] == 'foto':
+        if slot[0] == 'photo':
             self.ui.photo.setPixmap(QPixmap(slot[1]))
         
         self._controller.check_changes()

@@ -77,7 +77,7 @@ class ContactWindow(QDialog):
             
             self.ui.notesLabel.setStyleSheet('color: ' + slot[1])
 
-        if slot[0] == 'foto':
+        if slot[0] == 'photo':
 
             self.ui.photo.setPixmap(QPixmap(slot[1]))
 

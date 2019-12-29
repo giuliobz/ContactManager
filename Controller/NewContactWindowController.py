@@ -11,19 +11,6 @@ class NewContactWindowController(QObject):
         # Connect this controller with the main controller  
         self._controller = controller
 
-    @pyqtSlot()
-    def backButtonFunc(self):
-        if self._model.is_changed:
-            text= "You are leaving the page with modify fields. Press ok if you want to lost all changes, else press cancel"
-            msgBox = QMessageBox()
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setText(text)
-            msgBox.setWindowTitle("Warning")
-            msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-            if (msgBox.exec_() == QMessageBox.Ok):
-                self._controller.changeCentralWidget('list')
-        self._controller.changeCentralWidget('list')
-
     @pyqtSlot(QTreeWidgetItem, int)
     def tagChanged(self, item, column):
         
@@ -53,6 +40,22 @@ class NewContactWindowController(QObject):
     @pyqtSlot(str)
     def change_note(self, note):
         self._model.note = note
+
+    @pyqtSlot()
+    def backButtonFunc(self):
+        if self._model.is_changed:
+            text= "You are leaving the page with modify fields. Press ok if you want to lost all changes, else press cancel"
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setText(text)
+            msgBox.setWindowTitle("Warning")
+            msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            if (msgBox.exec_() == QMessageBox.Ok):
+                self._controller.changeCentralWidget('list')
+                
+        else:
+            self._controller.changeCentralWidget('list')
+
 
     @pyqtSlot()
     def insertContact(self):
@@ -93,7 +96,9 @@ class NewContactWindowController(QObject):
             msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             if (msgBox.exec_() == QMessageBox.Ok):
                 self._model.contactInfo = { 'photo' : 'Build/contact_2.png', 'name' : '', 'secondName' : '', 'phone' : '', 'mail' : '', 'notes' : '', 'tags' : []}
-        self._model.contactInfo = { 'photo' : 'Build/contact_2.png', 'name' : '', 'secondName' : '', 'phone' : '', 'mail' : '', 'notes' : '', 'tags' : []}
+        else:
+
+            self._model.contactInfo = { 'photo' : 'Build/contact_2.png', 'name' : '', 'secondName' : '', 'phone' : '', 'mail' : '', 'notes' : '', 'tags' : []}
 
     @pyqtSlot()
     def changeImage(self):
@@ -101,11 +106,11 @@ class NewContactWindowController(QObject):
         options |= QFileDialog.DontUseNativeDialog
         fileName = QFileDialog.getOpenFileName(caption='Open file', filter="Image files (*.jpg *.gif *.png)", options=options)
         if '.png' in fileName[0] or '.jpg' in fileName[0] or '.gif' in fileName[0]:
-            self._model.foto = fileName[0]
+            self._model.photo = fileName[0]
 
     @pyqtSlot()
     def check_changes(self):
-        if self._model.foto == 'Build/contact_2.png' and self._model.name == '' and self._model.secondName == '' and self._model.phone == '' and self._model.contactInfo['notes'] == '' and self._model.tags == []:
+        if self._model.photo == 'Build/contact_2.png' and self._model.name == '' and self._model.secondName == '' and self._model.phone == '' and self._model.contactInfo['notes'] == '' and self._model.tags == []:
             self._model.is_changed = False
         else:
             self._model.is_changed = True
