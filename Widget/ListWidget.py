@@ -40,6 +40,7 @@ class ListWidget(QDialog):
         # connect list to the model
         self._model.insertElementSignal.connect(self.add_contact)
         self._model.updateContactSignal.connect(self.refresh)
+
         # Load the current contact in list
         self._controller.loadContact()
     
@@ -62,9 +63,7 @@ class ListWidget(QDialog):
     # selected_element variable is updated.
     @pyqtSlot(QTreeWidgetItem, int)
     def upload_selected_element(self, item, column):
-        for i in range(self.ui.contactList.invisibleRootItem().childCount()):
-            item = self.ui.contactList.invisibleRootItem().child(i)
-            self._selected[str(id(item))] =  [True if item.checkState(0) == Qt.Checked else False]
+        self._selected[str(id(item))] =  [True if item.checkState(0) == Qt.Checked else False]
 
 
     @pyqtSlot()

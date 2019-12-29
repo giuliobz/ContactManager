@@ -44,9 +44,16 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="deleteImageButton">
+        <property name="text">
+         <string>Delete Image</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="resetImgButton">
         <property name="text">
-         <string>Reset Image</string>
+         <string>Undo Image Chandes</string>
         </property>
        </widget>
       </item>
