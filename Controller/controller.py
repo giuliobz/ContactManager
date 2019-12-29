@@ -68,7 +68,7 @@ class Controller(QObject):
             contact = QTreeWidgetItem()
             contact.setCheckState(0, Qt.Unchecked)
             contactWindow = ContactWindow(contactInfo['id'],contactInfo, self)
-            contactInfo['tags'] = '/'.join(contactInfo['tags'])
+            contactInfo['tags'] = contactInfo['tags']
             identifier = str(id(contact))
             self._model.indexTable = [identifier, contactInfo['id']]
             self._model.currentContactList = ['load', contactInfo, contactWindow, contact]
