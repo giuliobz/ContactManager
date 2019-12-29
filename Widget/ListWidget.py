@@ -34,19 +34,40 @@ class ListWidget(QDialog):
         self.ui.addButton.clicked.connect(lambda : self.addButtonFunc())
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
         self.ui.deleteButton.clicked.connect(lambda : self.delete_item())
-        self.ui.searchButton.clicked.connect(lambda : self.search())
+        self.ui.searchButton.clicked.connect(lambda : self.searchContact())
 
         # Connect list to item change signal
         self.ui.contactList.itemChanged.connect(self.upload_selected_element)
+        self.ui.nameLine.textChanged.connect(self._controller.changeLineSearch)
+        self.ui.tagSearch.currentTextChanged.connect(self._controller.changeTagsSearch)
 
         # connect list to the model
         self._model.insertElementSignal.connect(self.add_contact)
         self._model.updateContactSignal.connect(self.refresh)
+        self._model.searchMadeSignal.connect(self.changeSearchButtonName)
 
         # Load the current contact in list
         self._controller.loadContact()
 
-    def search(self):
+    @pyqtSlot(bool)
+    def changeSearchButtonName(self, search):
+        if search:
+
+            self.ui.searchButton.setText('Cancel search')
+
+        else:
+
+            self.ui.searchButton.setText('Search')
+            self.ui.nameLine.setText('')
+            self.ui.tagSearch.setCurrentIndex(0)
+            self._controller.loadContact()
+
+
+    def searchContact(self):
+        self.ui.contactList.clear()
+        self._controller.search()
+
+        '''
         if self.ui.searchButton.text() != 'Cancel search':
         
             if self.ui.nameLine.text() != '' and self.ui.tagSearch.currentText() != '-- all --':
@@ -63,11 +84,12 @@ class ListWidget(QDialog):
                 self.ui.searchButton.setText('Cancel search')
         
         else:
+
             self.ui.contactList.clear()
             self.ui.nameLine.setText('')
             self.ui.tagSearch.setCurrentIndex(0)
             self._controller.loadContact()
-
+        '''
             
 
     def addButtonFunc(self):

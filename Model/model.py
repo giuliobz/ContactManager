@@ -11,11 +11,17 @@ DIR_NAME = os.path.dirname(os.path.abspath('__file__'))
 
 class Model(QObject):
     updateContactSignal = pyqtSignal()
+    searchMadeSignal = pyqtSignal(bool)
     insertElementSignal = pyqtSignal(list)
     changeCentralWidgetSignal = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
+
+        # Define the line and tag search element
+        self._lineSearch = ''
+        self._tagsSearch = '-- all --'
+        self._searchDone = False
 
         # Define the current central widget
         self._currentCentralWidget = None
@@ -31,6 +37,14 @@ class Model(QObject):
 
         # Define the id counter
         self._id = 0
+
+    @property
+    def lineSearch(self):
+        return self._lineSearch
+
+    @property
+    def tagsSearch(self):
+        return self._tagsSearch 
     
     @property
     def currentCentralWidget(self):
@@ -47,6 +61,23 @@ class Model(QObject):
     @property
     def id(self):
         return self._id
+
+    @property
+    def searchDone(self):
+        return self._searchDone
+    
+    @searchDone.setter
+    def searchDone(self, slot):
+        self._searchDone = slot
+        self.searchMadeSignal.emit(slot)
+
+    @lineSearch.setter
+    def lineSearch(self, slot):
+        self._lineSearch = slot
+
+    @tagsSearch.setter
+    def tagsSearch(self, slot):
+        self._tagsSearch = slot
 
     @currentCentralWidget.setter
     def currentCentralWidget(self, slot):
@@ -101,7 +132,7 @@ class Model(QObject):
                 self._currentContactList = {i:self._currentContactList[i] for i in self._currentContactList.keys() if i!=int(contact)}
 
         elif 'search' in newContact[0]:
-            print(newContact[1])
+            
             self.insertElementSignal.emit([newContact[1]['name'] + ' ' + newContact[1]['secondName'], newContact[2], newContact[3]])
 
                 

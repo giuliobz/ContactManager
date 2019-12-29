@@ -44,49 +44,65 @@ class Controller(QObject):
         else:
             self._model.currentCentralWidget = ContactWindow()
 
-    @pyqtSlot(list)
-    def search(self, slot):
-        contacts = []
-        #string.lower()
-        if 'both' in slot[0]:
+    @pyqtSlot()
+    def search(self):
+        if not self._model.searchDone:
+            contacts = []
+            if self._model.lineSearch != '' and self._model.tagsSearch != '-- all --':
 
-            slot[1] = slot[1].split(' ')
-            if len(slot[1]) > 1:
+                lineText = self._model.lineSearch.split(' ')
+                if len(lineText) > 1:
+                    for key in self._model.currentContactList.keys():
+                        if lineText[0].lower() == self._model.currentContactList[key]['name'].lower() and lineText[1].lower() == self._model.currentContactList[key]['secondName'].lower() and self._model.tagsSearch in self._model.currentContactList[key]['tags']:
+                            contacts.append([key, self._model.currentContactList[key]])
+                
+                else:
+                    for key in self._model.currentContactList.keys():
+                        if lineText[0].lower() == self._model.currentContactList[key]['name'].lower() or lineText[0].lower() == self._model.currentContactList[key]['secondName'].lower() and self._model.tagsSearch in self._model.currentContactList[key]['tags']:
+                            contacts.append([key, self._model.currentContactList[key]])
+
+            elif self._model.lineSearch != '' and self._model.tagsSearch == '-- all --':
+
+                lineText = self._model.lineSearch.split(' ')
+                if len(lineText) > 1:
+                    for key in self._model.currentContactList.keys():
+                        if lineText[0].lower() == self._model.currentContactList[key]['name'].lower() and lineText[1].lower() == self._model.currentContactList[key]['secondName'].lower():
+                            contacts.append([key, self._model.currentContactList[key]])
+                
+                else:
+                    for key in self._model.currentContactList.keys():
+                        if lineText[0].lower() == self._model.currentContactList[key]['name'].lower() or lineText[0].lower() == self._model.currentContactList[key]['secondName'].lower():
+                            contacts.append([key, self._model.currentContactList[key]])
+
+            elif self._model.lineSearch == '' and self._model.tagsSearch != '-- all --':
+
                 for key in self._model.currentContactList.keys():
-                    if slot[1][0].lower() == self._model.currentContactList[key]['name'].lower() and slot[1][1].lower() == self._model.currentContactList[key]['secondName'].lower() and slot[2] in self._model.currentContactList[key]['tags']:
+                    if self._model.tagsSearch in self._model.currentContactList[key]['tags']:
                         contacts.append([key, self._model.currentContactList[key]])
+
+
+            for con in contacts:
+                contact = QTreeWidgetItem()
+                contact.setCheckState(0, Qt.Unchecked)
+                contactWindow = ContactWindow(con[0], con[1], self)
+                self._model.currentContactList = ['search', con[1], contactWindow, contact]
             
-            else:
-                for key in self._model.currentContactList.keys():
-                    if slot[1][0].lower() == self._model.currentContactList[key]['name'].lower() or slot[1][0].lower() == self._model.currentContactList[key]['secondName'].lower() and slot[2] in self._model.currentContactList[key]['tags']:
-                        contacts.append([key, self._model.currentContactList[key]])
+            self._model.searchDone = True
         
-        elif 'string' in slot[0]:
+        else:
 
-            slot[1] = slot[1].split(' ')
-            if len(slot[1]) > 1:
-                for key in self._model.currentContactList.keys():
-                    if slot[1][0].lower() == self._model.currentContactList[key]['name'].lower() and slot[1][1].lower() == self._model.currentContactList[key]['secondName'].lower():
-                        contacts.append([key, self._model.currentContactList[key]])
-            
-            else:
-                for key in self._model.currentContactList.keys():
-                    if slot[1][0].lower() == self._model.currentContactList[key]['name'].lower() or slot[1][0].lower() == self._model.currentContactList[key]['secondName'].lower():
-                        contacts.append([key, self._model.currentContactList[key]])
-
-        elif 'tag' in slot[0]:
-            for key in self._model.currentContactList.keys():
-                if slot[1] in self._model.currentContactList[key]['tags']:
-                    contacts.append([key, self._model.currentContactList[key]])
-
-        for con in contacts:
-            contact = QTreeWidgetItem()
-            contact.setCheckState(0, Qt.Unchecked)
-            contactWindow = ContactWindow(con[0], con[1], self)
-            self._model.currentContactList = ['search', con[1], contactWindow, contact]
+            self._model.searchDone = False
+            self._model.tagsSearch = '-- all --'
+            self._model.lineSearch = ''
 
 
-
+    @pyqtSlot(str)
+    def changeLineSearch(self, slot):
+        self._model.lineSearch = slot
+    
+    @pyqtSlot(str)
+    def changeTagsSearch(self, slot):
+        self._model.tagsSearch = slot
 
     @pyqtSlot(dict)
     def insertNewContact(self, newContact):
