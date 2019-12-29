@@ -1,8 +1,9 @@
-from Build.Ui_ContactManagerWindow import Ui_ContactManager
+from Build.Ui_ContactManagerWindow import Ui_ContactManagerWindow
 
 from Model.model import Model
 from Controller.controller import Controller
 
+from Widget.AboutDialog import AboutDialog
 from Widget.ListWidget import ListWidget
 
 from PyQt5.QtCore import pyqtSlot
@@ -18,8 +19,12 @@ class ContactManager(QMainWindow):
         self._controller = Controller(self._model)
 
         # Set up the user interface from Designer.
-        self.ui = Ui_ContactManager()
+        self.ui = Ui_ContactManagerWindow()
         self.ui.setupUi(self)
+
+        # Create about dialog and wire actions.
+        self._aboutDialog = AboutDialog()
+        self.ui.action_About.triggered.connect(self._aboutDialog.exec_)
 
         # Connect action
         self.ui.action_Quit.triggered.connect(QApplication.exit)

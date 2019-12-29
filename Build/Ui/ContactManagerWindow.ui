@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ContactManager</class>
- <widget class="QMainWindow" name="ContactManager">
+ <class>ContactManagerWindow</class>
+ <widget class="QMainWindow" name="ContactManagerWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>891</width>
-    <height>1465</height>
+    <width>874</width>
+    <height>1409</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Contact Manger</string>
+   <string>Contact Manager</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout"/>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>891</width>
+     <width>874</width>
      <height>34</height>
     </rect>
    </property>
@@ -29,48 +27,24 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="action_Edit"/>
+    <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
      <string>&amp;Help</string>
     </property>
-    <addaction name="action_About_2"/>
+    <addaction name="action_About"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Help"/>
   </widget>
-  <action name="action_About">
-   <property name="text">
-    <string>&amp;About</string>
-   </property>
-  </action>
-  <action name="action_New_Contact">
-   <property name="text">
-    <string>&amp;New Contact</string>
-   </property>
-  </action>
+  <widget class="QStatusBar" name="statusbar"/>
   <action name="action_Quit">
    <property name="text">
     <string>&amp;Quit</string>
    </property>
   </action>
-  <action name="action_Add">
-   <property name="text">
-    <string>&amp;Add</string>
-   </property>
-  </action>
-  <action name="action_Quit_2">
-   <property name="text">
-    <string>&amp;Quit</string>
-   </property>
-  </action>
-  <action name="action_Edit">
-   <property name="text">
-    <string>&amp;Quit</string>
-   </property>
-  </action>
-  <action name="action_About_2">
+  <action name="action_About">
    <property name="text">
     <string>&amp;About</string>
    </property>
