@@ -27,9 +27,12 @@ class Database:
     
     # update a contact with new data
     def updateContact(self, photo, first_name, last_name, telephone, email, notes, tags, id):
+        img =  cv2.imread(photo)
+        if [path for path in os.listdir('Database/imageDatabase/') if first_name in path or last_name in path]:
+            os.remove(['Database/imageDatabase/' + path for path in os.listdir('Database/imageDatabase/') if first_name in path or last_name in path][0])
         image_path = 'Database/imageDatabase/' + first_name + '_' + last_name + '.png'
-        self.connection.execute("""UPDATE CONTACTS SET PHOTO=?, FIRST_NAME=?, LAST_NAME=?,TELEPHONE=?, EMAIL=?, NOTES=?, TAGS=? WHERE C_ID=?""", (photo, first_name,last_name,telephone,email ,notes, tags, id))
-        cv2.imwrite(image_path, cv2.imread(photo))
+        self.connection.execute("""UPDATE CONTACTS SET PHOTO=?, FIRST_NAME=?, LAST_NAME=?,TELEPHONE=?, EMAIL=?, NOTES=?, TAGS=? WHERE C_ID=?""", (image_path, first_name,last_name,telephone,email ,notes, tags, id))
+        cv2.imwrite(image_path, img)
         self.connection.commit()
 
     #delete a contact
@@ -37,4 +40,3 @@ class Database:
         self.connection.execute("DELETE FROM CONTACTS WHERE C_ID = ?", (id,))
         os.remove(photo)
         self.connection.commit()
-

@@ -2,7 +2,7 @@ from Build.Ui_ContactWidget import Ui_ContactWidget
 
 
 from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
-from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QDialog, QTreeWidgetItem, QMessageBox, QFileDialog
 from PyQt5.QtGui import QImage, QPixmap
 
 # Window that contain all the clips in annotation buffer with the correlated preferencies
@@ -13,7 +13,7 @@ class ContactWindow(QDialog):
 
         # The contact id to find it 
         self._id = idx
-        self._photo = contactInfo['photo']
+        self._contactInfo = contactInfo
         
         # Connect controller
         self._controller = controller
@@ -36,6 +36,19 @@ class ContactWindow(QDialog):
         # Connect function to controller    
         self.ui.backButton.clicked.connect(self.close)
         self.ui.saveButton.clicked.connect(self.changeContactInfo)
+        self.ui.resetImgButton.clicked.connect(self.resetImage)
+        self.ui.changeImgButton.clicked.connect(self.changeImage)
+
+        # Connect line 
+
+    def backFunc(self):
+        
+        text= "You are changing a contact. Press ok to modify the existing contact with these new information. Press cancel to go back in new contact window."
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setText(text)
+        msgBox.setWindowTitle("Warning")
+        msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
 
     
     def changeContactInfo(self):
@@ -61,4 +74,18 @@ class ContactWindow(QDialog):
                     contactInfo['tags'].append(self.ui.tagsList.invisibleRootItem().child(i).text(0))
 
             self._controller.updateContact(contactInfo)
+            self.close()
+
+    
+    def resetImage(self):
+        self._contactInfo['photo'] = 'Build/contact_2.png'
+        self.ui.photo.setPixmap(QPixmap(self._contactInfo['photo']))
+
+    def changeImage(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName = QFileDialog.getOpenFileName(self, caption='Open file', filter="Image files (*.jpg *.gif *.png)", options=options)
+        if fileName[0] != '':
+            self._photo = fileName[0]
+            self.ui.photo.setPixmap(QPixmap(self._contactInfo['photo']))
 

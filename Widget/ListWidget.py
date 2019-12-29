@@ -71,10 +71,10 @@ class ListWidget(QDialog):
     def delete_item(self):
         self._controller.deleteContacts(self._selected)
         self.refresh()
+        self.enableEdit()
+        self._selected = {}
 
     @pyqtSlot()
     def refresh(self):
         self.ui.contactList.clear()
-        self._controller.refreshList()
-        self.enableEdit()
-        self._selected = {}
+        self._controller.loadContact()
