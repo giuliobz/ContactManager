@@ -31,7 +31,6 @@ class ListWidget(QDialog):
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
 
         # Define Add Button
-        #self.ui.addButton.clicked.connect(lambda : NewContactWindow(self._model.currentContactList, self._controller).exec_())
         self.ui.addButton.clicked.connect(lambda : self.addButtonFunc())
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
         self.ui.deleteButton.clicked.connect(lambda : self.delete_item())
