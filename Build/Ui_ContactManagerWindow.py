@@ -39,8 +39,6 @@ class Ui_ContactManager(object):
         self.action_Edit.setObjectName("action_Edit")
         self.action_About_2 = QtWidgets.QAction(ContactManager)
         self.action_About_2.setObjectName("action_About_2")
-        self.menu_File.addAction(self.action_Add)
-        self.menu_File.addSeparator()
         self.menu_File.addAction(self.action_Edit)
         self.menu_Help.addAction(self.action_About_2)
         self.menuBar.addAction(self.menu_File.menuAction())

@@ -6,7 +6,7 @@ from Controller.controller import Controller
 from Widget.ListWidget import ListWidget
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QMainWindow, QWidget
+from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication
 
 
 class ContactManager(QMainWindow):
@@ -20,6 +20,9 @@ class ContactManager(QMainWindow):
         # Set up the user interface from Designer.
         self.ui = Ui_ContactManager()
         self.ui.setupUi(self)
+
+        # Connect action
+        self.ui.action_Quit.triggered.connect(QApplication.exit)
 
         # Connect model signal with the view   
         self._model.changeCentralWidgetSignal.connect(self.changeCentralWidget)

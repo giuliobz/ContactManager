@@ -29,8 +29,6 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="action_Add"/>
-    <addaction name="separator"/>
     <addaction name="action_Edit"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
