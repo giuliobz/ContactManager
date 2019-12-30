@@ -59,6 +59,10 @@ class ContactWindowController(QObject):
         self._model.notes = note
 
     @pyqtSlot()
+    def deleteContact(self):
+        self._model
+
+    @pyqtSlot()
     def backFunc(self):
         if self._model.is_changed:
             text= "You are exing with modify field. Press ok if you want to lost all changes, else press cancel"

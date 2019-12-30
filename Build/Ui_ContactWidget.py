@@ -136,6 +136,9 @@ class Ui_ContactWidget(object):
         self.saveButton = QtWidgets.QPushButton(self.buttonWidget)
         self.saveButton.setObjectName("saveButton")
         self.horizontalLayout_2.addWidget(self.saveButton)
+        self.deleteButton = QtWidgets.QPushButton(self.buttonWidget)
+        self.deleteButton.setObjectName("deleteButton")
+        self.horizontalLayout_2.addWidget(self.deleteButton)
         self.backButton = QtWidgets.QPushButton(self.buttonWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -152,7 +155,7 @@ class Ui_ContactWidget(object):
     def retranslateUi(self, ContactWidget):
         _translate = QtCore.QCoreApplication.translate
         ContactWidget.setWindowTitle(_translate("ContactWidget", "ContactWidget"))
-        self.photo.setText(_translate("ContactWidget", "<html><head/><body><p><img src=\":/contact_2.png\"/></p></body></html>"))
+        self.photo.setText(_translate("ContactWidget", "<html><head/><body><p><br/></p></body></html>"))
         self.changeImgButton.setText(_translate("ContactWidget", "Change Image"))
         self.deleteImageButton.setText(_translate("ContactWidget", "Delete Image"))
         self.resetImgButton.setText(_translate("ContactWidget", "Undo Image Chandes"))
@@ -174,5 +177,6 @@ class Ui_ContactWidget(object):
         self.tagsList.topLevelItem(7).setText(0, _translate("ContactWidget", "work"))
         self.tagsList.setSortingEnabled(__sortingEnabled)
         self.saveButton.setText(_translate("ContactWidget", "Save changes"))
+        self.deleteButton.setText(_translate("ContactWidget", "Delete Contact"))
         self.backButton.setText(_translate("ContactWidget", "Back"))
 

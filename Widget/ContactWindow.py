@@ -6,9 +6,9 @@ from Model.ContactWindowModel import ContactWindowModel
 
 from Controller.ContactWindowController import ContactWindowController
 
-from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtCore import pyqtSlot, Qt, QRegExp
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QRegExpValidator
 
 # Window that contain all the clips in annotation buffer with the correlated preferencies
 class ContactWindow(QDialog):
@@ -27,6 +27,7 @@ class ContactWindow(QDialog):
         # Set up the user interface from Designer.
         self.ui = Ui_ContactWidget()
         self.ui.setupUi(self)
+        self.ui.telephoneLine.setValidator(QRegExpValidator(QRegExp("\\d*"), self))
 
         # Set info in window
         self.ui.photo.setPixmap(QPixmap(contactInfo['photo']))
@@ -47,6 +48,7 @@ class ContactWindow(QDialog):
         self.ui.backButton.clicked.connect(self._controller.backFunc)
         self.ui.saveButton.clicked.connect(self._controller.changeContactInfo)
         self.ui.resetImgButton.clicked.connect(self._controller.resetImage)
+        self.ui.deleteButton.clicked.connect(self._controller.deleteContact)
         self.ui.changeImgButton.clicked.connect(self._controller.changeImage)
         self.ui.deleteImageButton.clicked.connect(self._controller.deleteImage)
 

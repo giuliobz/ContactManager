@@ -4,9 +4,9 @@ from Controller.NewContactWindowController import NewContactWindowController
 
 from Build.Ui_NewContactWidget import Ui_NewContactWidget
 
-from PyQt5.Qt import pyqtSlot, Qt, pyqtSignal, QObject
+from PyQt5.Qt import pyqtSlot, Qt, pyqtSignal, QObject, QRegExp
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QImage, QPixmap, QIntValidator
+from PyQt5.QtGui import QImage, QPixmap, QIntValidator, QRegExpValidator
 
 # Window that contain all the clips in annotation buffer with the correlated preferencies
 class NewContactWindow(QDialog):
@@ -21,7 +21,7 @@ class NewContactWindow(QDialog):
         # Set up the user interface from Designer.
         self.ui = Ui_NewContactWidget()
         self.ui.setupUi(self)
-        self.ui.telephoneLine.setValidator(QIntValidator(0, 2147483647, self))
+        self.ui.telephoneLine.setValidator(QRegExpValidator(QRegExp("\\d*"), self))
 
         # Connect button
         self.ui.saveButton.clicked.connect(self._controller.insertContact)

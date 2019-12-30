@@ -26,7 +26,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/contact_2.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -253,6 +253,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="deleteButton">
+        <property name="text">
+         <string>Delete Contact</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="backButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -270,8 +277,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../contact.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

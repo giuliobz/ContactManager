@@ -48,30 +48,41 @@ class Controller(QObject):
     def search(self):
         if not self._model.searchDone:
             contacts = []
+            
             if self._model.lineSearch != '' and self._model.tagsSearch != '-- all --':
 
-                lineText = self._model.lineSearch.split(' ')
-                if len(lineText) > 1:
+                # This condition is important. Infact if there is a space in model.lineSearch,
+                # Is sure that the user what to search a contact using name and surname.
+                # If the space don't apperar in lineSearch, the user can be use, for example, the mail, 
+                # phone number or other contact info.
+                if ' ' in self._model.lineSearch:
+                    lineText = self._model.lineSearch.split(' ')
+                
                     for key in self._model.currentContactList.keys():
                         if lineText[0].lower() == self._model.currentContactList[key]['name'].lower() and lineText[1].lower() == self._model.currentContactList[key]['secondName'].lower() and self._model.tagsSearch in self._model.currentContactList[key]['tags']:
                             contacts.append([key, self._model.currentContactList[key]])
                 
                 else:
+
+                    lineText = self._model.lineSearch.lower()
                     for key in self._model.currentContactList.keys():
-                        if lineText[0].lower() == self._model.currentContactList[key]['name'].lower() or lineText[0].lower() == self._model.currentContactList[key]['secondName'].lower() and self._model.tagsSearch in self._model.currentContactList[key]['tags']:
+                        if lineText.lower() == self._model.currentContactList[key]['name'].lower() or lineText == self._model.currentContactList[key]['secondName'].lower() or lineText == self._model.currentContactList[key]['mail'] or lineText == self._model.currentContactList[key]['phone'] and self._model.tagsSearch in self._model.currentContactList[key]['tags']:
                             contacts.append([key, self._model.currentContactList[key]])
 
             elif self._model.lineSearch != '' and self._model.tagsSearch == '-- all --':
 
-                lineText = self._model.lineSearch.split(' ')
-                if len(lineText) > 1:
+                if ' ' in self._model.lineSearch:
+                    lineText = self._model.lineSearch.split(' ')
+
                     for key in self._model.currentContactList.keys():
                         if lineText[0].lower() == self._model.currentContactList[key]['name'].lower() and lineText[1].lower() == self._model.currentContactList[key]['secondName'].lower():
                             contacts.append([key, self._model.currentContactList[key]])
                 
                 else:
+
+                    lineText = self._model.lineSearch.lower()
                     for key in self._model.currentContactList.keys():
-                        if lineText[0].lower() == self._model.currentContactList[key]['name'].lower() or lineText[0].lower() == self._model.currentContactList[key]['secondName'].lower():
+                        if lineText.lower() == self._model.currentContactList[key]['name'].lower() or lineText == self._model.currentContactList[key]['secondName'].lower() or lineText == self._model.currentContactList[key]['mail'] or lineText == self._model.currentContactList[key]['phone']:
                             contacts.append([key, self._model.currentContactList[key]])
 
             elif self._model.lineSearch == '' and self._model.tagsSearch != '-- all --':
@@ -88,7 +99,7 @@ class Controller(QObject):
                 self._model.currentContactList = ['search', con[1], contactWindow, contact]
             
             self._model.searchDone = True
-        
+            
         else:
 
             self._model.searchDone = False
