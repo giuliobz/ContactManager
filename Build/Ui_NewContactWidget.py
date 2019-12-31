@@ -167,4 +167,3 @@ class Ui_NewContactWidget(object):
         self.resetButton.setText(_translate("NewContactWidget", "Reset"))
         self.backButton.setText(_translate("NewContactWidget", "Back"))
 
-import contact_rc
