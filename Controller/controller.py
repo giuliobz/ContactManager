@@ -147,10 +147,14 @@ class Controller(QObject):
         
         self._model.id = idx + 1
             
-    @pyqtSlot(dict)
+    @pyqtSlot(object)
     def deleteContacts(self, selected_element):
-        identifier = [identifier for identifier in selected_element.keys() if selected_element[identifier][0]]
-        idx = [self._model.indexTable[i] for i in identifier]
+        if isinstance(selected_element, dict):
+            identifier = [identifier for identifier in selected_element.keys() if selected_element[identifier][0]]
+            idx = [self._model.indexTable[i] for i in identifier]
+        else:
+            idx = [selected_element]
+
         self._model.currentContactList = ['delete', idx]
 
     

@@ -45,6 +45,7 @@ class ListWidget(QDialog):
         self._model.insertElementSignal.connect(self.add_contact)
         self._model.updateContactSignal.connect(self.refresh)
         self._model.searchMadeSignal.connect(self.changeSearchButtonName)
+        self._model.refreshListSignal.connect(self.refresh)
 
         # Load the current contact in list
         self._controller.loadContact()
@@ -93,7 +94,6 @@ class ListWidget(QDialog):
     @pyqtSlot()
     def delete_item(self):
         self._controller.deleteContacts(self._selected)
-        self.refresh()
         self.enableEdit()
         self._selected = {}
 

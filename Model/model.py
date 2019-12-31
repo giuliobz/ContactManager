@@ -11,6 +11,7 @@ DIR_NAME = os.path.dirname(os.path.abspath('__file__'))
 
 class Model(QObject):
     updateContactSignal = pyqtSignal()
+    refreshListSignal = pyqtSignal()
     searchMadeSignal = pyqtSignal(bool)
     insertElementSignal = pyqtSignal(list)
     changeCentralWidgetSignal = pyqtSignal(object)
@@ -133,7 +134,9 @@ class Model(QObject):
             for contact in newContact[1]:
                 
                 self._database.deleteContact(contact, self._currentContactList[contact]['photo'])
+                self._indexTable = {i : self._indexTable[i] for i in self._indexTable.keys() if self._indexTable[i] != int(contact)}
                 self._currentContactList = {i:self._currentContactList[i] for i in self._currentContactList.keys() if i!=int(contact)}
+                self.refreshListSignal.emit()
 
         # Search in contact using key words or tag.
         elif 'search' in newContact[0]:

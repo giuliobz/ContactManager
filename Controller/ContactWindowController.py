@@ -60,7 +60,10 @@ class ContactWindowController(QObject):
 
     @pyqtSlot()
     def deleteContact(self):
-        self._model
+        self._model.closeWindowSignal.emit()
+        self._controller.deleteContacts(self._model.id)
+        
+        
 
     @pyqtSlot()
     def backFunc(self):
