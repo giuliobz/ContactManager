@@ -40,7 +40,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Search</string>
+         <string>Search Contacts</string>
         </property>
        </widget>
       </item>
@@ -105,7 +105,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Delete</string>
+         <string>Delete Contacts</string>
         </property>
        </widget>
       </item>
@@ -118,7 +118,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Add</string>
+         <string>Add Contact</string>
         </property>
        </widget>
       </item>
@@ -131,7 +131,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Edit</string>
+         <string>Select Contacts</string>
         </property>
        </widget>
       </item>

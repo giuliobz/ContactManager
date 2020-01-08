@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'NewContactWidget.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_NewContactWidget(object):
     def setupUi(self, NewContactWidget):
@@ -166,4 +168,3 @@ class Ui_NewContactWidget(object):
         self.saveButton.setText(_translate("NewContactWidget", "Save"))
         self.resetButton.setText(_translate("NewContactWidget", "Reset"))
         self.backButton.setText(_translate("NewContactWidget", "Back"))
-
