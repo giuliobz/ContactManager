@@ -36,6 +36,7 @@ class ContactWindow(QDialog):
         self.ui.telephoneLine.setText(contactInfo['phone'])
         self.ui.emailLine.setText(contactInfo['mail'])
         self.ui.noteBox.setText(contactInfo['notes'])
+
         for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
             if self.ui.tagsList.invisibleRootItem().child(i).text(0) in contactInfo['tags']:
                 self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Checked)

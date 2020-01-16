@@ -14,7 +14,7 @@ class Model(QObject):
     refreshListSignal = pyqtSignal()
     searchMadeSignal = pyqtSignal(bool)
     insertElementSignal = pyqtSignal(list)
-    changeCentralWidgetSignal = pyqtSignal(object)
+    changeCentralWidgetSignal = pyqtSignal(list)
 
     def __init__(self):
         super().__init__()
@@ -82,7 +82,7 @@ class Model(QObject):
 
     @currentCentralWidget.setter
     def currentCentralWidget(self, slot):
-        self._currentCentralWidget = slot
+        self._currentCentralWidget = slot[0]
         self.changeCentralWidgetSignal.emit(slot)
         
 

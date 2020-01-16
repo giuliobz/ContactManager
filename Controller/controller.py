@@ -38,11 +38,10 @@ class Controller(QObject):
 
     def changeCentralWidget(self, widget):
         if widget == 'newContact':
-            self._model.currentCentralWidget = NewContactWindow(self._model.currentContactList, self)
+            self._model.currentCentralWidget = [NewContactWindow(self._model.currentContactList, self), 'New Contact']
         elif widget == 'list':
-            self._model.currentCentralWidget = ListWidget(self._model, self)
-        else:
-            self._model.currentCentralWidget = ContactWindow()
+            self._model.currentCentralWidget = [ListWidget(self._model, self), 'Contact Manager']
+        
 
     @pyqtSlot()
     def search(self):

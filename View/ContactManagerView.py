@@ -35,6 +35,7 @@ class ContactManager(QMainWindow):
         # Set starting central widget
         self.setCentralWidget(ListWidget(self._model, self._controller))
 
-    @pyqtSlot(object)
+    @pyqtSlot(list)
     def changeCentralWidget(self, widget):
-        self.setCentralWidget(widget)
+        self.setWindowTitle(widget[1])
+        self.setCentralWidget(widget[0])
