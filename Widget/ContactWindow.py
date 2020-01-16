@@ -19,6 +19,7 @@ class ContactWindow(QDialog):
         # The contact id to find it 
         self._id = idx
         self._contactInfo = contactInfo
+        self.setWindowTitle('ciao')
         
         # Connect controller
         self._model = ContactWindowModel(idx, contactInfo)
