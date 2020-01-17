@@ -6,7 +6,7 @@ from Controller.controller import Controller
 from Widget.AboutDialog import AboutDialog
 from Widget.ListWidget import ListWidget
 
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication
 
 
