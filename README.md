@@ -25,7 +25,7 @@ Features include:
 - Modify contact : the user can modify existing contact by tapping in contact name. When the user modify an existing contact, the modified field changes the name color to semplify the user visualization.
 
 <p align="center">
-  <img src="Build/git_images/contact_window_pre.png" width="277"/>
+  <img src="Build/git_images/contact_window_pre.png" width="300"/>
   <img src="Build/git_images/contact_window_post.png" width="300"/>
 </p>
 
