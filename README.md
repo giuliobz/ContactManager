@@ -22,11 +22,11 @@ Features include:
 
 - Search contact : the user can search contact by name, surname or by other information (e.g phone number, email) and by selecting a particular tag.
 
-- Add contact : obviously the user can add contact and can modify contact by tapping in contact name. When the user modify an existing contact, the modified field change the color to semplify the user visualization.
+- Modify contact : the user can modify existing contact by tapping in contact name. When the user modify an existing contact, the modified field changes the name color to semplify the user visualization.
 
 <p align="center">
-  <img src="Build/git_images/newContact_window.png" width="277"/>
-  <img src="Build/git_images/contact_window.png" width="300"/>
+  <img src="Build/git_images/contact_window_pre.png" width="277"/>
+  <img src="Build/git_images/contact_window_post.png" width="300"/>
 </p>
 
 ## Download
