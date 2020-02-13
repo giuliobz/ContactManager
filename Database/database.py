@@ -36,7 +36,10 @@ class Database:
         self.connection.commit()
 
     #delete a contact
-    def deleteContact(self, id, photo):
+    def deleteContact(self, id):
+        photo = self.connection.execute("SELECT PHOTO TEXT FROM CONTACTS WHERE C_ID = ?", (id,)).fetchone()
         self.connection.execute("DELETE FROM CONTACTS WHERE C_ID = ?", (id,))
-        os.remove(photo)
         self.connection.commit()
+        os.remove(photo[0])
+        
+        

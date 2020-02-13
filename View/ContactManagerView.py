@@ -1,13 +1,14 @@
 from Build.Ui_ContactManagerWindow import Ui_ContactManagerWindow
 
-from Model.model import Model
-from Controller.controller import Controller
+from Model.ContactListModel import Model
 
+from Widget.ContactWindow import ContactWindow
+from Widget.NewContactWindow import NewContactWindow
 from Widget.AboutDialog import AboutDialog
 from Widget.ListWidget import ListWidget
 
 from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication
+from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QStackedWidget
 
 
 class ContactManager(QMainWindow):
@@ -16,11 +17,16 @@ class ContactManager(QMainWindow):
 
         # Define model and conroller 
         self._model = Model()
-        self._controller = Controller(self._model)
 
         # Set up the user interface from Designer.
         self.ui = Ui_ContactManagerWindow()
         self.ui.setupUi(self)
+
+        # Setup the stacked widget to change view
+        self._stack = QStackedWidget()
+        self._stack.addWidget(ListWidget(self._model))
+        self._stack.addWidget(NewContactWindow(self._model))
+        self._stack.addWidget(ContactWindow(self._model))
 
         # Create about dialog and wire actions.
         self._aboutDialog = AboutDialog()
@@ -33,9 +39,9 @@ class ContactManager(QMainWindow):
         self._model.changeCentralWidgetSignal.connect(self.changeCentralWidget)
 
         # Set starting central widget
-        self.setCentralWidget(ListWidget(self._model, self._controller))
+        self.setCentralWidget(self._stack)
 
-    @pyqtSlot(list)
-    def changeCentralWidget(self, widget):
-        self.setWindowTitle(widget[1])
-        self.setCentralWidget(widget[0])
+    @pyqtSlot(int)
+    def changeCentralWidget(self, widget_id):
+        self._stack.setCurrentIndex(widget_id)
+        self.setCentralWidget(self._stack)

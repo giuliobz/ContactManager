@@ -1,56 +1,54 @@
-from Model.NewContactWindowModel import NewContactWindowModel
+from Widget.ImageObserve import Observable
 
-from Controller.NewContactWindowController import NewContactWindowController
+from Model.NewContactWindowModel import NewContactWindowModel
 
 from Build.Ui_NewContactWidget import Ui_NewContactWidget
 
 from PyQt5.Qt import pyqtSlot, Qt, pyqtSignal, QObject, QRegExp
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QMessageBox, QFileDialog
 from PyQt5.QtGui import QImage, QPixmap, QIntValidator, QRegExpValidator
 
 # Window that contain all the clips in annotation buffer with the correlated preferencies
 class NewContactWindow(QDialog):
 
-    def __init__(self, currentContactList, controller):
+    def __init__(self, mainModel):
         super().__init__()
 
         # connect controller and model
-        self._model = NewContactWindowModel(currentContactList)
-        self._controller = NewContactWindowController(controller, self._model)
+        self._model = NewContactWindowModel(mainModel)
 
         # Set up the user interface from Designer.
         self.ui = Ui_NewContactWidget()
         self.ui.setupUi(self)
+        self.ui.photo.setPixmap(QPixmap('Build/contact_2.png').scaled(289, 289))
         self.ui.telephoneLine.setValidator(QRegExpValidator(QRegExp("\\d*"), self))
 
         # Connect button
-        self.ui.saveButton.clicked.connect(self._controller.insertContact)
-        self.ui.resetButton.clicked.connect(self._controller.resetButton)
-        self.ui.backButton.clicked.connect(lambda : self._controller.backButtonFunc())
-        self.ui.setPhoto.clicked.connect(self._controller.changeImage)
-
-        # Set default image. 
-        self.ui.photo.setPixmap(QPixmap(self._model.contactInfo['photo']))
+        self.ui.saveButton.clicked.connect(self._model.insertContact)
+        self.ui.resetPhoto.clicked.connect(self.resetPhoto)
+        self.ui.backButton.clicked.connect(lambda : mainModel.changeWidget(0))
+        self.ui.setPhoto.clicked.connect(self.changeImage)
 
         # Connect line changes 
-        self.ui.nameLine.textChanged.connect(self._controller.change_name) 
-        self.ui.seconNameLine.textChanged.connect(self._controller.change_secondName)
-        self.ui.telephoneLine.textChanged.connect(self._controller.change_Phone)
-        self.ui.emailLine.textChanged.connect(self._controller.change_Email)
-        self.ui.noteBox.textChanged.connect(self.change_note)
-        self.ui.tagsList.itemChanged.connect(self._controller.tagChanged)
+        self.ui.nameLine.textChanged.connect(self._model.change_name) 
+        self.ui.seconNameLine.textChanged.connect(self._model.change_secondName)
+        self.ui.telephoneLine.textChanged.connect(self._model.change_Phone)
+        self.ui.emailLine.textChanged.connect(self._model.change_Email)
+        self.ui.noteBox.textChanged.connect(lambda : self._model.change_note(self.ui.noteBox.toPlainText()))
+        self.ui.tagsList.itemChanged.connect(self._model.tagChanged)
 
-        # Connect model
-        self._model.resetSignal.connect(lambda : self.resetButton())
-        self._model.contactChangedSignal.connect(self.changeContact)
+        # Connect the photo to an Observable. This allow the application
+        # to understand when the user set a new photo or not.
+        self._photo = Observable('Build/contact_2.png')
+        self._photo.observe(self._model.change_photo)
 
-
-    def change_note(self):
-        self._controller.change_note(self.ui.noteBox.toPlainText())
-        
-    def resetButton(self):
-        
-        self.ui.photo.setPixmap(QPixmap('Build/contact_2.png'))
+        # Connect Signal model 
+        self._model.resetSignal.connect(self.reset)
+    
+    # Simple function to reset the contact window information.
+    def reset(self):
+        self.ui.photo.setPixmap(QPixmap('Build/contact_2.png').scaled(289, 289))
+        self._photo.value = 'Build/contact_2.png'
         self.ui.nameLine.setText('')
         self.ui.seconNameLine.setText('')
         self.ui.telephoneLine.setText('')
@@ -58,18 +56,22 @@ class NewContactWindow(QDialog):
         self.ui.noteBox.setText('')
         for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
             if(self.ui.tagsList.invisibleRootItem().child(i).checkState(0) == Qt.Checked):
-               self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Unchecked)
+                self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Unchecked)
 
-    @pyqtSlot(str)
-    def changeImage(self, image):
-        self.ui.photo.setPixmap(QPixmap(image))
+    # Allow the user to change te photo.
+    @pyqtSlot()
+    def changeImage(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName = QFileDialog.getOpenFileName(caption='Open file', filter="Image files (*.jpg *.gif *.png)", options=options)
+        if '.png' in fileName[0] or '.jpg' in fileName[0] or '.gif' in fileName[0]:
+            self.ui.photo.setPixmap(QPixmap(fileName[0]).scaled(289, 289))
+            self._photo.value = fileName[0]
 
-    @pyqtSlot(list)
-    def changeContact(self, slot):
-        if slot[0] == 'photo':
-            self.ui.photo.setPixmap(QPixmap(slot[1]))
-        
-        self._controller.check_changes()
-
+    # Allow the user to delete the setted photo
+    @pyqtSlot()
+    def resetPhoto(self):
+        self.ui.photo.setPixmap(QPixmap('Build/contact_2.png').scaled(289, 289))
+        self._photo.value = 'Build/contact_2.png'
 
 

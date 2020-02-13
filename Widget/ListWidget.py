@@ -7,15 +7,28 @@ from Widget.ContactButton import ContactButton
 from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem
 
+def createContactInfo(contact):
+    contactInfo = {}
+
+    contactInfo['id'] = int(contact[0])
+    contactInfo['photo'] = (contact[1])
+    contactInfo['name'] = contact[2]
+    contactInfo['secondName'] = contact[3]
+    contactInfo['phone'] = contact[4]
+    contactInfo['mail'] = contact[5]
+    contactInfo['notes'] = contact[6]
+    contactInfo['tags'] = contact[7].split('/')
+
+    return contactInfo
+
 # Window that contain all the clips in annotation buffer with the correlated preferencies
 class ListWidget(QDialog):
 
-    def __init__(self, model, controller):
+    def __init__(self, model):
         super().__init__()
         
         # Connect model and controller
         self._model = model
-        self._controller = controller
 
         # Define the variable of selected element in edit mode.
         # the key is the item identifier and the value is
@@ -31,73 +44,78 @@ class ListWidget(QDialog):
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
 
         # Connect button behaviour
-        self.ui.addButton.clicked.connect(lambda : self.addButtonFunc())
+        self.ui.addButton.clicked.connect(lambda : self._model.changeWidget(1))
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
-        self.ui.deleteButton.clicked.connect(lambda : self.delete_item())
-        self.ui.searchButton.clicked.connect(lambda : self.searchContact())
+        self.ui.deleteButton.clicked.connect(lambda : self._model.deleteContacts())
+        self.ui.searchButton.clicked.connect(lambda : self._model.searchContacts())
 
         # Connect list to item change signal
-        self.ui.contactList.itemChanged.connect(self.upload_selected_element)
-        self.ui.nameLine.textChanged.connect(self._controller.changeLineSearch)
-        self.ui.tagSearch.currentTextChanged.connect(self._controller.changeTagsSearch)
+        self.ui.contactList.itemChanged.connect(self._model.upload_selected_element)
+        self.ui.nameLine.textChanged.connect(self._model.setTextualSearch)
+        self.ui.tagSearch.currentTextChanged.connect(self._model.setTagSearch)
 
         # connect list to the model
-        self._model.insertElementSignal.connect(self.add_contact)
-        self._model.updateContactSignal.connect(self.refresh)
-        self._model.searchMadeSignal.connect(self.changeSearchButtonName)
         self._model.refreshListSignal.connect(self.refresh)
+        self._model.searchDoneSignal.connect(lambda slot: self.changeSearchStatus(slot))
+        self._model.deleteDoneSignal.connect(self.enableEdit)
+        self._model.addContactSignal.connect(self.add_contact)
 
         # Load the current contact in list
-        self._controller.loadContact()
+        self._model.loadListContact()
+    
+    # Function to change the QTreeWidget column visibility and the delete button visibility.
+    # When the user click edit he can delet multiple contacts by selecting them
+    # and clicking the delete button. If no one contacts is selected it only 
+    # change the QTreeWidget column visibility and delete button visibility.
+    @pyqtSlot()
+    def enableEdit(self):
+        self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
+        self.ui.editButton.setEnabled(not self.ui.editButton.isEnabled())
+        self.ui.contactList.setColumnHidden(0, not self.ui.contactList.isColumnHidden(0))
 
-    @pyqtSlot(bool)
-    def changeSearchButtonName(self, search):
-        if search:
-
+    # Function that change the search button text in case the user is making a search.
+    # After the user makes his contact search, tapping the Cancel search button 
+    # he resets the view to the original one (if he does not make change).
+    def changeSearchStatus(self, slot):
+        if slot:
             self.ui.searchButton.setText('Cancel search')
 
         else:
-
             self.ui.searchButton.setText('Search')
             self.ui.nameLine.setText('')
             self.ui.tagSearch.setCurrentIndex(0)
-            self._controller.loadContact()
 
-
-    def searchContact(self):
-        self.ui.contactList.clear()
-        self._controller.search()
-            
-
-    def addButtonFunc(self):
-        self._controller.changeCentralWidget('newContact')
-
-    def enableEdit(self):
-        self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
-        self.ui.contactList.setColumnHidden(0, not self.ui.contactList.isColumnHidden(0))
 
     # Add new anotation to QTreeWidget
     # NewContaact is a list where the first element is the name and the second element is 
     # a ContactWindow associated with the contact...
-    @pyqtSlot(list)
+    @pyqtSlot(dict)
     def add_contact(self, newContact):
-        self.ui.contactList.addTopLevelItem(newContact[2])
-        self.ui.contactList.setItemWidget(newContact[2], 1, ContactButton(newContact[0], newContact[1]))
+        contact = QTreeWidgetItem()
+        contact.setCheckState(0, Qt.Unchecked)
+        contact.setData(0, Qt.UserRole, newContact['id'])
+        self.ui.contactList.addTopLevelItem(contact)
+        self.ui.contactList.setItemWidget(contact, 1, ContactButton(newContact['name'] + ' ' + newContact['secondName'], self._model, newContact['id']))
 
     # When a element is selected or deselected the 
     # selected_element variable is updated.
     @pyqtSlot(QTreeWidgetItem, int)
     def upload_selected_element(self, item, column):
-        self._selected[str(id(item))] =  [True if item.checkState(0) == Qt.Checked else False]
+        self._selected[item.data(0, Qt.UserRole)] =  [True if item.checkState(0) == Qt.Checked else False]
 
-
-    @pyqtSlot()
-    def delete_item(self):
-        self._controller.deleteContacts(self._selected)
-        self.enableEdit()
-        self._selected = {}
-
-    @pyqtSlot()
-    def refresh(self):
+    # Function to refresh the contact list.
+    # Is used when: contacts are searched, new contact is insert,
+    # contact is changed and contact is deleted.
+    # This beacouse we want an ordered list.
+    @pyqtSlot(list)
+    def refresh(self, contacts):
         self.ui.contactList.clear()
-        self._controller.loadContact()
+
+        for contactInfo in contacts:
+            contact = QTreeWidgetItem()
+            contact.setCheckState(0, Qt.Unchecked)
+            contact.setData(0, Qt.UserRole, contactInfo['id'])
+            self.ui.contactList.addTopLevelItem(contact)
+            self.ui.contactList.setItemWidget(contact, 1, ContactButton(contactInfo['name'] + ' ' + contactInfo['secondName'], self._model, contactInfo['id']))  
+
+        
