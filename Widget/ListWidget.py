@@ -53,6 +53,7 @@ class ListWidget(QDialog):
         self.ui.contactList.itemChanged.connect(self._model.upload_selected_element)
         self.ui.nameLine.textChanged.connect(self._model.setTextualSearch)
         self.ui.tagSearch.currentTextChanged.connect(self._model.setTagSearch)
+        self.ui.orderBox.currentTextChanged.connect(self._model.setCurrentOrder)
 
         # connect list to the model
         self._model.refreshListSignal.connect(self.refresh)

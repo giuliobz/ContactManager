@@ -21,9 +21,14 @@ class Database:
         return image_path
 
     # get all contact of the database order by name
-    def getContacts(self):
-        result = self.cursor.execute("SELECT * FROM CONTACTS ORDER BY lower(FIRST_NAME) ASC, LOWER(LAST_NAME) ASC")
-        return result.fetchall()
+    def getContacts(self, method='FIRST_NAME'):
+        if 'FIRST_NAME' == method:
+            result = self.cursor.execute("SELECT * FROM CONTACTS ORDER BY lower(FIRST_NAME) ASC, LOWER(LAST_NAME) ASC")
+            return result.fetchall()
+            
+        else:
+            result = self.cursor.execute("SELECT * FROM CONTACTS ORDER BY lower(LAST_NAME) ASC, LOWER(FIRST_NAME) ASC")
+            return result.fetchall()
     
     # update a contact with new data
     def updateContact(self, photo, first_name, last_name, telephone, email, notes, tags, id):

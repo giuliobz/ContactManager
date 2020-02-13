@@ -17,21 +17,7 @@
    <item>
     <widget class="QWidget" name="widget" native="true">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0">
-       <widget class="QLabel" name="nameLabel">
-        <property name="text">
-         <string>Search name : </string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="tagLabel">
-        <property name="text">
-         <string>Search tag : </string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="4">
+      <item row="3" column="3">
        <widget class="QPushButton" name="searchButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -44,10 +30,14 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="3">
-       <widget class="QLineEdit" name="nameLine"/>
+      <item row="2" column="0">
+       <widget class="QLabel" name="nameLabel">
+        <property name="text">
+         <string>Search name : </string>
+        </property>
+       </widget>
       </item>
-      <item row="2" column="1" colspan="3">
+      <item row="3" column="1" colspan="2">
        <widget class="QComboBox" name="tagSearch">
         <item>
          <property name="text">
@@ -96,7 +86,7 @@
         </item>
        </widget>
       </item>
-      <item row="0" column="4">
+      <item row="0" column="3">
        <widget class="QPushButton" name="deleteButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -133,6 +123,37 @@
         <property name="text">
          <string>Select Contacts</string>
         </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="tagLabel">
+        <property name="text">
+         <string>Search tag : </string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="QLineEdit" name="nameLine"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="orderLabel">
+        <property name="text">
+         <string>Order by:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="orderBox">
+        <item>
+         <property name="text">
+          <string>First Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Last Name</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>

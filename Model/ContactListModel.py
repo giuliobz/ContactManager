@@ -38,9 +38,6 @@ class Model(QObject):
         self._tagsSearch = '-- all --'
         self._searchDone = False  
 
-        # Define the current central widget
-        self._currentCentralWidget = None
-
         # Define a list to memorize the selected
         # contact that the user want delete
         self._selected_contacts = {}
@@ -51,10 +48,19 @@ class Model(QObject):
         # Define the id counter
         self._id = 0
 
+        # Define the current order method: 0 for name, 1 second name.
+        self._currentIdOrder = 'FIRST_NAME'
+
+    # Function to display the contact in the new Order
+    @pyqtSlot(str)
+    def setCurrentOrder(self, order_method):
+        self._currentIdOrder = '_'.join(order_method.split(' ')).upper()
+        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
+
     # This function changes the apllication view and set the contact information
     @pyqtSlot()
     def getInformation(self, id):
-        contacts = [createContactInfo(c) for c in self._database.getContacts()]
+        contacts = [createContactInfo(c) for c in self._database.getContacts(self._currentIdOrder)]
         selected_contact = [contact for contact in contacts if id == contact['id']][0]
         self.currentInformationSignal.emit(selected_contact)
         self.changeCentralWidgetSignal.emit(2)
@@ -63,7 +69,7 @@ class Model(QObject):
     # stored in the database by the user
     @pyqtSlot()
     def loadListContact(self):
-        contact_info = [createContactInfo(contact) for contact in self._database.getContacts()]
+        contact_info = [createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder)]
         for contact in contact_info:
             if int(contact['id']) > self._id:
                 self._id = int(contact['id'])
@@ -109,7 +115,7 @@ class Model(QObject):
         
         self._selected_contacts = {}       
         self.deleteDoneSignal.emit()
-        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts() ])
+        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
 
     # When a element is selected or deselected the 
     # selected_element variable is updated.
@@ -138,20 +144,20 @@ class Model(QObject):
         # We check if the user already insert the contact in the list.
         # If it true we put the id in the surname. The user can change 
         # after the information.
-        current_cotact = [ createContactInfo(contact) for contact in self._database.getContacts() ]
+        current_cotact = [ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ]
         if [c for c in current_cotact if contact['name'] == c['name'] and contact['secondName'] == c['secondName']]:
             contact['secondName'] += '_' + str(self._id)
         
         self._database.saveContact(self._id, contact['photo'], contact['name'], contact['secondName'], contact['phone'], contact['mail'], contact['notes'], '/'.join(contact['tags']))
         self.changeCentralWidgetSignal.emit(0)
-        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts() ])
+        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
         self._id += 1
         
 
     # Simple function to search contact inside the list
     @pyqtSlot()
     def searchContacts(self):
-        current_contact_list = [ createContactInfo(contact) for contact in self._database.getContacts() ]
+        current_contact_list = [ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ]
 
         # Is checked if the user make a search or not
         if not self._searchDone:
@@ -212,13 +218,13 @@ class Model(QObject):
             self.searchDone = False
             self._tagsSearch = '-- all --'
             self._lineSearch = ''
-            self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts() ])
+            self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
 
     # Funtion to delete a single contact
     @pyqtSlot(int)
     def deleteContact(self, id):
         self._database.deleteContact(id)
-        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts() ])
+        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
     
     # Function to update contact informations
     @pyqtSlot(dict)
