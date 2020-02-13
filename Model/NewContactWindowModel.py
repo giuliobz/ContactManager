@@ -1,5 +1,5 @@
 from PyQt5.Qt import QObject, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QTreeWidgetItem
+from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog
 
 def createContactInfo(contact):
     contactInfo = {}
@@ -17,6 +17,7 @@ def createContactInfo(contact):
 
 class NewContactWindowModel(QObject):
     resetSignal = pyqtSignal()
+    changePhotoSignal = pyqtSignal(str)
 
     def __init__(self, mainModel):
         super().__init__()
@@ -26,19 +27,6 @@ class NewContactWindowModel(QObject):
 
         # Define the variable that contain the contact info.
         self._contactInfo = {}
-
-    @pyqtSlot()
-    def isChanged(self):
-        return self._contactInfo.keys()
-
-    # memorize the changes in photo
-    @pyqtSlot(str)
-    def change_photo(self, photo):
-        if photo != 'Build/contact_2.png':
-            self._contactInfo['photo'] = photo
-        
-        elif 'photo' in self._contactInfo.keys():
-            del self._contactInfo['photo']
 
     # memorize the changes in name
     @pyqtSlot(str)
@@ -113,3 +101,26 @@ class NewContactWindowModel(QObject):
             self._mainModel.changeWidget(0)
         
         self.resetSignal.emit()
+
+    #Funtion to reset photo
+    @pyqtSlot()
+    def resetPhoto(self):
+        self._contactInfo['photo'] = 'Build/contact_2.png'
+        self.changePhotoSignal.emit('Build/contact_2.png')
+
+    # Funtion to set photo
+    @pyqtSlot()
+    def changeImage(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName = QFileDialog.getOpenFileName(caption='Open file', filter="Image files (*.jpg *.gif *.png)", options=options)
+        if '.png' in fileName[0] or '.jpg' in fileName[0] or '.gif' in fileName[0]:
+            self._contactInfo['photo'] = fileName[0]
+            self.changePhotoSignal.emit(fileName[0])
+    
+    # Funtion to change the view with the contact
+    # list main view
+    @pyqtSlot()
+    def changeView(self):
+        self.resetSignal.emit()
+        self._mainModel.changeCentralWidgetSignal.emit(0)

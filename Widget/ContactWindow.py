@@ -4,8 +4,6 @@ from Build.Ui_ContactWidget import Ui_ContactWidget
 
 from Model.ContactWindowModel import ContactWindowModel
 
-from Widget.ImageObserve import Observable
-
 from PyQt5.QtCore import pyqtSlot, Qt, QRegExp
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QImage, QPixmap, QRegExpValidator
