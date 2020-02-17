@@ -1,24 +1,24 @@
-import collections
-
 from Build.Ui_ContactWidget import Ui_ContactWidget
 
-from Model.ContactWindowModel import ContactWindowModel
-
 from PyQt5.QtCore import pyqtSlot, Qt, QRegExp
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog,QFileDialog, QMessageBox
 from PyQt5.QtGui import QImage, QPixmap, QRegExpValidator
 
 # Window that contain all the clips in annotation buffer with the correlated preferencies
 class ContactWindow(QDialog):
 
-    def __init__(self, mainModel):
+    def __init__(self, model, changeCentralWidget):
         super().__init__()
 
-        # The contact id to find it
-        self.setWindowTitle('ciao')
+        # The two variable that memorize event change.
+        # The first take the original information, the second
+        # contain the key of the changed element.
+        self._currentContactInfo = {}
+        self._new_photo = ''
         
-        # Connect controller
-        self._model = ContactWindowModel(mainModel)
+        # Connect model and to the change central widget funtion
+        self._model = model
+        self._changeCentralWidget = changeCentralWidget 
 
         # Set up the user interface from Designer.
         self.ui = Ui_ContactWidget()
@@ -26,31 +26,29 @@ class ContactWindow(QDialog):
         self.ui.telephoneLine.setValidator(QRegExpValidator(QRegExp("\\d*"), self))
 
         # Connect with model signal
-        self._model.closeWindowSignal.connect(self.closeWindow)
-        self._model.contactChangedSignal.connect(self.changeTextColor)
-        self._model.changePhotoSignal.connect(self.changeImage)
-        self._model.initializeContactSignal.connect(self.initializeContactInfo)
+        self._model.currentInformationSignal.connect(self.initializeContactInfo)
 
-        # Connect function to controller    
-        self.ui.backButton.clicked.connect(self._model.closeWindow)
-        self.ui.saveButton.clicked.connect(self._model.changeContactInfo)
-        self.ui.resetImgButton.clicked.connect(self._model.resetImage)
-        self.ui.deleteButton.clicked.connect(self._model.deleteContact)
-        self.ui.changeImgButton.clicked.connect(self._model.changeImage)
-        self.ui.deleteImageButton.clicked.connect(self._model.deleteImage)
+        # Define button function   
+        self.ui.backButton.clicked.connect(self.closeWindow)
+        self.ui.saveButton.clicked.connect(self.changeContactInfo)
+        self.ui.resetImgButton.clicked.connect(self.resetImage)
+        self.ui.deleteButton.clicked.connect(self.deleteContact)
+        self.ui.changeImgButton.clicked.connect(self.changeImage)
+        self.ui.deleteImageButton.clicked.connect(self.deleteImage)
 
         # Connect line changes 
-        self.ui.nameLine.textChanged.connect(self._model.change_name) 
-        self.ui.seconNameLine.textChanged.connect(self._model.change_secondName)
-        self.ui.telephoneLine.textChanged.connect(self._model.change_Phone)
-        self.ui.emailLine.textChanged.connect(self._model.change_Email)
-        self.ui.noteBox.textChanged.connect(lambda : self._model.change_note(self.ui.noteBox.toPlainText()))
-        self.ui.tagsList.itemChanged.connect(self._model.tagChanged)
+        self.ui.nameLine.textChanged.connect(self.change_name) 
+        self.ui.seconNameLine.textChanged.connect(self.change_secondName)
+        self.ui.telephoneLine.textChanged.connect(self.change_Phone)
+        self.ui.emailLine.textChanged.connect(self.change_Email)
+        self.ui.noteBox.textChanged.connect(lambda : self.change_note(self.ui.noteBox.toPlainText()))
 
     # function to initialize the contact window with the selected contact.
     @pyqtSlot(dict)
     def initializeContactInfo(self, contactInfo):
-        # Set info in window
+        # Set info in window and memorize it
+        self._currentContactInfo = contactInfo
+
         self.ui.photo.setPixmap(QPixmap(contactInfo['photo']).scaled(289, 289))
         self.ui.nameLine.setText(contactInfo['name'])
         self.ui.seconNameLine.setText(contactInfo['secondName'])
@@ -62,31 +60,100 @@ class ContactWindow(QDialog):
             if self.ui.tagsList.invisibleRootItem().child(i).text(0) in contactInfo['tags']:
                 self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Checked)
 
-    @pyqtSlot(list)
-    def changeTextColor(self, slot):
+    # Simple function to delete current image, setting the default one.
+    @pyqtSlot()
+    def deleteImage(self):
+        self._new_photo = 'Build/contact_2.png' 
+        self.ui.photo.setPixmap(QPixmap('Build/contact_2.png').scaled(289, 289))
+    
+    # Simple funtion to undo the photo changes
+    @pyqtSlot()
+    def resetImage(self):
+        self._new_photo = ''
+        self.ui.photo.setPixmap(QPixmap(self._currentContactInfo['photo']).scaled(289, 289))
 
-        if slot[0] == 'name':
-            self.ui.nameText.setStyleSheet('color: ' + slot[1])
-        
-        if slot[0] == 'secondName':
-            self.ui.secondNameText.setStyleSheet('color: ' + slot[1])
-        
-        if slot[0] == 'phone':
-            self.ui.phoneText.setStyleSheet('color: ' + slot[1])
-        
-        if slot[0] == 'mail':
-            self.ui.mailText.setStyleSheet('color: ' + slot[1])
-        
-        if slot[0] == 'notes':
-            self.ui.notesLabel.setStyleSheet('color: ' + slot[1])
+    # Allow the user to change the photo.
+    @pyqtSlot()
+    def changeImage(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName = QFileDialog.getOpenFileName(caption='Open file', filter="Image files (*.jpg *.gif *.png)", options=options)
+        if '.png' in fileName[0] or '.jpg' in fileName[0] or '.gif' in fileName[0]:
+            self._new_photo = fileName[0]
+            self.ui.photo.setPixmap(QPixmap(fileName[0]).scaled(289, 289))
 
-        if slot[0] == 'photo':
-            self.ui.photo.setPixmap(QPixmap(slot[1]))
-
-    # change image
+    # Function to display name changes
     @pyqtSlot(str)
-    def changeImage(self, image):
-        self.ui.photo.setPixmap(QPixmap(image).scaled(289, 289))
+    def change_name(self, name):
+        if name != self._currentContactInfo['name']:
+            self.ui.nameText.setStyleSheet('color: red')
+        else:
+            self.ui.nameText.setStyleSheet('color: black')
+    
+    # Function to display second name changes
+    @pyqtSlot(str)
+    def change_secondName(self, secondName):
+        if secondName != self._currentContactInfo['secondName']:
+            self.ui.secondNameText.setStyleSheet('color: red')
+        else:
+            self.ui.secondNameText.setStyleSheet('color: black')
+            
+    # Function to display phone changes
+    @pyqtSlot(str)
+    def change_Phone(self, phone):
+        if phone != self._currentContactInfo['phone']:
+            self.ui.phoneText.setStyleSheet('color: red')
+        else:
+            self.ui.phoneText.setStyleSheet('color: black')
+
+    # Function to display mail changes
+    @pyqtSlot(str)
+    def change_Email(self, mail):
+        if mail != self._currentContactInfo['mail']:
+            self.ui.mailText.setStyleSheet('color: red')
+        else:
+            self.ui.mailText.setStyleSheet('color: black')
+
+    # Function to display notes changes
+    @pyqtSlot(str)
+    def change_note(self, note):
+        if note!= self._currentContactInfo['notes']:
+            self.ui.notesLabel.setStyleSheet('color: red')
+        else:
+            self.ui.notesLabel.setStyleSheet('color: black')
+
+    # Function to change contact info 
+    @pyqtSlot()
+    def changeContactInfo(self):
+        newContactInfo = {}
+        newContactInfo['photo'] = self._new_photo if self._new_photo != '' else self._currentContactInfo['photo']
+        newContactInfo['name'] = self.ui.nameLine.text()
+        newContactInfo['secondName'] = self.ui.seconNameLine.text()
+        newContactInfo['phone'] = self.ui.telephoneLine.text()
+        newContactInfo['mail'] = self.ui.emailLine.text()
+        newContactInfo['notes'] = self.ui.noteBox.toPlainText()
+        newContactInfo['tags'] = []
+        for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
+            if self.ui.tagsList.invisibleRootItem().child(i).checkState(0):
+                newContactInfo['tags'].append(self.ui.tagsList.invisibleRootItem().child(i).text(0))
+        
+        # In a real case we controll if the contact updates is made or not.
+        self._model.updateContactInfos(newContactInfo, self._currentContactInfo)
+        self.closeWindow()
+    
+    # Simple function to delete contacts
+    @pyqtSlot()
+    def deleteContact(self):
+        text= "You are deleting a contact press ok to delete it, else press cancel."
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setText(text)
+        msgBox.setWindowTitle("Warning")
+        msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        if (msgBox.exec_() == QMessageBox.Ok):
+            self._model.deleteContacts({self._currentContactInfo['id'] : True})
+            self.closeWindow()
+        
 
     # Reset the window information
     @pyqtSlot()
@@ -99,6 +166,10 @@ class ContactWindow(QDialog):
         for i in range(self.ui.tagsList.invisibleRootItem().childCount()):
             self.ui.tagsList.invisibleRootItem().child(i).setCheckState(0, Qt.Unchecked)
 
+        self._currentContactInfo = {}
+        self._newContactInfo = {}
+
+        self._changeCentralWidget(0)
 
 
 

@@ -1,6 +1,6 @@
 from Build.Ui_ContactManagerWindow import Ui_ContactManagerWindow
 
-from Model.ContactListModel import Model
+from ContactListModel import Model
 
 from Widget.ContactWindow import ContactWindow
 from Widget.NewContactWindow import NewContactWindow
@@ -24,9 +24,9 @@ class ContactManager(QMainWindow):
 
         # Setup the stacked widget to change view
         self._stack = QStackedWidget()
-        self._stack.addWidget(ListWidget(self._model))
-        self._stack.addWidget(NewContactWindow(self._model))
-        self._stack.addWidget(ContactWindow(self._model))
+        self._stack.addWidget(ListWidget(self._model, self.changeCentralWidget))
+        self._stack.addWidget(NewContactWindow(self._model, self.changeCentralWidget))
+        self._stack.addWidget(ContactWindow(self._model, self.changeCentralWidget))
 
         # Create about dialog and wire actions.
         self._aboutDialog = AboutDialog()
@@ -41,6 +41,7 @@ class ContactManager(QMainWindow):
         # Set starting central widget
         self.setCentralWidget(self._stack)
 
+    # This function emit the signal to change the user view.
     @pyqtSlot(int)
     def changeCentralWidget(self, widget_id):
         self._stack.setCurrentIndex(widget_id)

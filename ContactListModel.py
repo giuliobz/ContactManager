@@ -1,5 +1,6 @@
 import os
 import sys
+import collections
 
 from Database.database import Database
 
@@ -23,7 +24,6 @@ def createContactInfo(contact):
     return contactInfo
 
 class Model(QObject):
-    deleteDoneSignal = pyqtSignal()
     currentInformationSignal = pyqtSignal(dict)
     changeCentralWidgetSignal = pyqtSignal(int)
     searchDoneSignal = pyqtSignal(bool)
@@ -86,55 +86,22 @@ class Model(QObject):
         self._searchDone = slot
         self.searchDoneSignal.emit(slot)
 
-    # This function emit the signal to change the user view.
-    # This is the cause that the main view has a list widget.
-    # In this implemetation the listWidget has id = 0, NewContactWidget
-    # has id=1.
-    @pyqtSlot()
-    def changeWidget(self, window_id):
-        self.changeCentralWidgetSignal.emit(window_id)
-
-    # Memorize the lineSearch variable change
-    @pyqtSlot(str)
-    def setTextualSearch(self, text):
-        self._lineSearch = text
-
-    # Memorize the tagearch variable change 
-    @pyqtSlot(str)
-    def setTagSearch(self, tag):
-        self._tagsSearch = tag
-
     # Simple function to delete contact in list. In this
-    # cas we refresh the contact list becaouse is faster
-    # than to delete the single contact.
-    @pyqtSlot()
-    def deleteContacts(self):
-        for idx in self._selected_contacts.keys():
-            if self._selected_contacts[idx]:
+    # cas we refresh the contact list because is faster
+    # than to delete the single contact. This funtion is used
+    # also to delete a single contact.
+    @pyqtSlot(dict)
+    def deleteContacts(self, selected_contacts):
+        for idx in selected_contacts.keys():
+            if selected_contacts[idx]:
                 self._database.deleteContact(idx)
-        
-        self._selected_contacts = {}       
-        self.deleteDoneSignal.emit()
-        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
 
-    # When a element is selected or deselected the 
-    # selected_element variable is updated.
-    @pyqtSlot(QTreeWidgetItem, int)
-    def upload_selected_element(self, item, column):
-        self._selected_contacts[item.data(0, Qt.UserRole)] =  [True if item.checkState(0) == Qt.Checked else False]
+        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
 
     # Define a function to add new contact in the database
     @pyqtSlot(dict)
-    def addNewContact(self, newContact):
-        contact = {}
+    def addNewContact(self, contact):
         contact['id'] = self._id
-        contact['photo'] = newContact['photo'] if 'photo' in newContact.keys() else 'Build/contact_2.png'
-        contact['name'] = newContact['name'] if 'name' in newContact.keys() else ''
-        contact['secondName'] = newContact['secondName'] if 'secondName' in newContact.keys() else ''
-        contact['phone'] = newContact['phone'] if 'phone' in newContact.keys() else ''
-        contact['mail'] = newContact['mail'] if 'mail' in newContact.keys() else ''
-        contact['notes'] = newContact['notes'] if 'notes' in newContact.keys() else ''
-        contact['tags'] = newContact['tags'] if 'tags' in newContact.keys() else []
 
         # If the user doesn't specify the name and second name of the 
         # contact, the name is setted like Unknown_ + id of the contact.
@@ -143,15 +110,14 @@ class Model(QObject):
 
         # We check if the user already insert the contact in the list.
         # If it true we put the id in the surname. The user can change 
-        # after the information.
+        # after the contact information.
         current_cotact = [ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ]
         if [c for c in current_cotact if contact['name'] == c['name'] and contact['secondName'] == c['secondName']]:
             contact['secondName'] += '_' + str(self._id)
         
         self._database.saveContact(self._id, contact['photo'], contact['name'], contact['secondName'], contact['phone'], contact['mail'], contact['notes'], '/'.join(contact['tags']))
-        self.changeCentralWidgetSignal.emit(0)
-        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
         self._id += 1
+        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
         
 
     # Simple function to search contact inside the list
@@ -220,13 +186,16 @@ class Model(QObject):
             self._lineSearch = ''
             self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
 
-    # Funtion to delete a single contact
-    @pyqtSlot(int)
-    def deleteContact(self, id):
-        self._database.deleteContact(id)
-        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
-    
     # Function to update contact informations
     @pyqtSlot(dict)
-    def updateContactInfos(self, contact_info):
-        self._database.updateContact(contact_info['photo'], contact_info['name'], contact_info['secondName'], contact_info['phone'], contact_info['mail'], contact_info['notes'], '/'.join(contact_info['tags']), contact_info['id'])
+    def updateContactInfos(self, newContactInfo, currentContactInfo):
+        contact_info = {}
+        contact_info['photo'] = newContactInfo['photo'] if newContactInfo['photo'] != currentContactInfo['photo'] else currentContactInfo['photo']
+        contact_info['name'] = newContactInfo['name'] if newContactInfo['name'] != currentContactInfo['name'] else currentContactInfo['name']
+        contact_info['secondName'] = newContactInfo['secondName'] if newContactInfo['secondName'] != currentContactInfo['secondName'] else currentContactInfo['secondName']
+        contact_info['phone'] = newContactInfo['phone'] if newContactInfo['phone'] != currentContactInfo['phone'] else currentContactInfo['phone']
+        contact_info['mail'] = newContactInfo['mail'] if newContactInfo['mail'] != currentContactInfo['mail'] else currentContactInfo['mail']
+        contact_info['notes'] = newContactInfo['notes'] if newContactInfo['notes'] != currentContactInfo['notes'] else currentContactInfo['notes']
+        contact_info['tags'] = newContactInfo['tags'] if collections.Counter(newContactInfo['tags']) != collections.Counter(currentContactInfo['tags']) else currentContactInfo['tags']
+        self._database.updateContact(contact_info['photo'], contact_info['name'], contact_info['secondName'], contact_info['phone'], contact_info['mail'], contact_info['notes'], '/'.join(contact_info['tags']), currentContactInfo['id'])
+        

@@ -24,7 +24,7 @@ def createContactInfo(contact):
 # Window that contain all the clips in annotation buffer with the correlated preferencies
 class ListWidget(QDialog):
 
-    def __init__(self, model):
+    def __init__(self, model, changeCentralWidget):
         super().__init__()
         
         # Connect model and controller
@@ -44,35 +44,47 @@ class ListWidget(QDialog):
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
 
         # Connect button behaviour
-        self.ui.addButton.clicked.connect(lambda : self._model.changeWidget(1))
+        self.ui.addButton.clicked.connect(lambda : changeCentralWidget(1))
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
-        self.ui.deleteButton.clicked.connect(lambda : self._model.deleteContacts())
+        self.ui.deleteButton.clicked.connect(lambda : self.enableEdit())
         self.ui.searchButton.clicked.connect(lambda : self._model.searchContacts())
 
         # Connect list to item change signal
-        self.ui.contactList.itemChanged.connect(self._model.upload_selected_element)
-        self.ui.nameLine.textChanged.connect(self._model.setTextualSearch)
-        self.ui.tagSearch.currentTextChanged.connect(self._model.setTagSearch)
+        self.ui.contactList.itemChanged.connect(self.upload_selected_element)
+        self.ui.nameLine.textChanged.connect(self.setTextualSearch)
+        self.ui.tagSearch.currentTextChanged.connect(self.setTagSearch)
         self.ui.orderBox.currentTextChanged.connect(self._model.setCurrentOrder)
 
         # connect list to the model
         self._model.refreshListSignal.connect(self.refresh)
         self._model.searchDoneSignal.connect(lambda slot: self.changeSearchStatus(slot))
-        self._model.deleteDoneSignal.connect(self.enableEdit)
         self._model.addContactSignal.connect(self.add_contact)
 
         # Load the current contact in list
         self._model.loadListContact()
     
     # Function to change the QTreeWidget column visibility and the delete button visibility.
-    # When the user click edit he can delet multiple contacts by selecting them
+    # When the user click edit he can delete multiple contacts by selecting them
     # and clicking the delete button. If no one contacts is selected it only 
     # change the QTreeWidget column visibility and delete button visibility.
     @pyqtSlot()
     def enableEdit(self):
+        if self._selected:
+            self._model.deleteContacts(self._selected)
+            self._selected = {}
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
         self.ui.editButton.setEnabled(not self.ui.editButton.isEnabled())
         self.ui.contactList.setColumnHidden(0, not self.ui.contactList.isColumnHidden(0))
+
+    # Memorize the lineSearch variable change
+    @pyqtSlot(str)
+    def setTextualSearch(self, text):
+        self._lineSearch = text
+
+    # Memorize the tagearch variable change 
+    @pyqtSlot(str)
+    def setTagSearch(self, tag):
+        self._tagsSearch = tag
 
     # Function that change the search button text in case the user is making a search.
     # After the user makes his contact search, tapping the Cancel search button 
