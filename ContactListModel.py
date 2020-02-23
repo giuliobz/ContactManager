@@ -34,8 +34,6 @@ class Model(QObject):
         super().__init__()
 
         # Define the line and tag search element
-        self._lineSearch = ''
-        self._tagsSearch = '-- all --'
         self._searchDone = False  
 
         # Define a list to memorize the selected
@@ -122,7 +120,7 @@ class Model(QObject):
 
     # Simple function to search contact inside the list
     @pyqtSlot()
-    def searchContacts(self):
+    def searchContacts(self, line, tag):
         current_contact_list = [ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ]
 
         # Is checked if the user make a search or not
@@ -130,31 +128,31 @@ class Model(QObject):
             selected_contact = []
             
             # In this case the user makes tag and text search
-            if self._lineSearch != '' and self._tagsSearch != '-- all --':
+            if line != '' and tag != '-- all --':
 
                 # If there is a space in lineSearch, is sure that 
                 # the user want to search a contact using the contact name and surname.
-                if ' ' in self._lineSearch:
-                    lineText = self._lineSearch.split(' ')
+                if ' ' in line:
+                    lineText = line.split(' ')
                 
                     for contact in current_contact_list:
-                        if lineText[0].lower() in contact['name'].lower() and lineText[1].lower() in contact['secondName'].lower() and self._tagsSearch in contact['tags']:
+                        if lineText[0].lower() in contact['name'].lower() and lineText[1].lower() in contact['secondName'].lower() and tag in contact['tags']:
                             selected_contact.append(contact)
 
                 # If the space doesn't appear in lineSearch, the user can be use, for example, the mail, 
                 # phone number or other contact info to search a contact in the list.
                 else:
 
-                    lineText = self._lineSearch.lower()
+                    lineText = line.lower()
                     for contact in current_contact_list:
-                        if lineText.lower() in contact['name'].lower() or lineText in contact['secondName'].lower() or lineText in contact['mail'] or lineText == contact['phone'] and self._tagsSearch in contact['tags']:
+                        if lineText.lower() in contact['name'].lower() or lineText in contact['secondName'].lower() or lineText in contact['mail'] or lineText == contact['phone'] and tag in contact['tags']:
                             selected_contact.append(contact)
 
             # In this case the user makes  text search
-            elif self._lineSearch != '' and self._tagsSearch == '-- all --':
+            elif line != '' and tag == '-- all --':
 
-                if ' ' in self._lineSearch:
-                    lineText = self._lineSearch.split(' ')
+                if ' ' in line:
+                    lineText = line.split(' ')
 
                     for contact in current_contact_list:
                         if lineText[0].lower() in contact['name'].lower() and lineText[1].lower() in contact['secondName'].lower():
@@ -162,16 +160,16 @@ class Model(QObject):
                 
                 else:
 
-                    lineText = self._lineSearch.lower()
+                    lineText = line.lower()
                     for contact in current_contact_list:
                         if lineText.lower() in contact['name'].lower() or lineText in contact['secondName'].lower() or lineText in contact['mail'] or lineText == contact['phone']:
                             selected_contact.append(contact)
 
             # In this case the user makes tag search
-            elif self._lineSearch == '' and self._tagsSearch != '-- all --':
+            elif line == '' and tag != '-- all --':
 
                 for contact in current_contact_list:
-                    if self._tagsSearch in contact['tags']:
+                    if tag in contact['tags']:
                         selected_contact.append(contact)
 
             self.searchDone = True
@@ -182,8 +180,6 @@ class Model(QObject):
         else:
 
             self.searchDone = False
-            self._tagsSearch = '-- all --'
-            self._lineSearch = ''
             self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
 
     # Function to update contact informations
@@ -198,4 +194,6 @@ class Model(QObject):
         contact_info['notes'] = newContactInfo['notes'] if newContactInfo['notes'] != currentContactInfo['notes'] else currentContactInfo['notes']
         contact_info['tags'] = newContactInfo['tags'] if collections.Counter(newContactInfo['tags']) != collections.Counter(currentContactInfo['tags']) else currentContactInfo['tags']
         self._database.updateContact(contact_info['photo'], contact_info['name'], contact_info['secondName'], contact_info['phone'], contact_info['mail'], contact_info['notes'], '/'.join(contact_info['tags']), currentContactInfo['id'])
+
+        self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
         

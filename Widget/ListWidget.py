@@ -47,12 +47,10 @@ class ListWidget(QDialog):
         self.ui.addButton.clicked.connect(lambda : changeCentralWidget(1))
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
         self.ui.deleteButton.clicked.connect(lambda : self.enableEdit())
-        self.ui.searchButton.clicked.connect(lambda : self._model.searchContacts())
+        self.ui.searchButton.clicked.connect(lambda : self.searchContacts())
 
         # Connect list to item change signal
         self.ui.contactList.itemChanged.connect(self.upload_selected_element)
-        self.ui.nameLine.textChanged.connect(self.setTextualSearch)
-        self.ui.tagSearch.currentTextChanged.connect(self.setTagSearch)
         self.ui.orderBox.currentTextChanged.connect(self._model.setCurrentOrder)
 
         # connect list to the model
@@ -76,15 +74,10 @@ class ListWidget(QDialog):
         self.ui.editButton.setEnabled(not self.ui.editButton.isEnabled())
         self.ui.contactList.setColumnHidden(0, not self.ui.contactList.isColumnHidden(0))
 
-    # Memorize the lineSearch variable change
-    @pyqtSlot(str)
-    def setTextualSearch(self, text):
-        self._lineSearch = text
+    # Function to search contacts
+    def searchContacts(self):
+        self._model.searchContacts(self.ui.nameLine.text(), self.ui.tagSearch.currentText())
 
-    # Memorize the tagearch variable change 
-    @pyqtSlot(str)
-    def setTagSearch(self, tag):
-        self._tagsSearch = tag
 
     # Function that change the search button text in case the user is making a search.
     # After the user makes his contact search, tapping the Cancel search button 
