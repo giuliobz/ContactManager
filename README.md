@@ -22,7 +22,7 @@ Features include:
 
 - Search contact : the user can search contact by name, surname or by other information (e.g phone number, email) and by selecting a particular tag.
 
-- Order contact list: the user can decide which type of order method to use: First Name ordering method or Second Name ordering method. 
+- Order contact list: the user can decide which type of ordering method use: First Name ordering method or Second Name ordering method. 
 
 - Modify contact : the user can modify existing contact by tapping in contact name. When the user modify an existing contact, the modified field changes its name color to semplify the user visualization.
 
