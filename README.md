@@ -6,7 +6,7 @@ This is a simple Contact Manager application used to memorize contacts informati
   <img src="Build/git_images/contact_list.png" width="280"/>
 </p>
 
-The application is composed by a main view with which the user can manage the contact list. 
+The application is composed by a main view with which the user can manage the contact list.  
 
 ## Features
 
@@ -16,7 +16,8 @@ Features include:
 
 
 <p align="center">
-  <img src="Build/git_images/selecting_view.png" width="280"/>
+  <img src="Build/git_images/delete_pre.png" width="280"/>
+  <img src="Build/git_images/delete_post.png" width="280"/>
 </p>
 
 
