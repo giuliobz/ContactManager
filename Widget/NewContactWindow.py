@@ -35,8 +35,8 @@ class NewContactWindow(QDialog):
     def changeImage(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName = QFileDialog.getOpenFileName(caption='Open file', filter="Image files (*.jpg *.gif *.png)", options=options)
-        if '.png' in fileName[0] or '.jpg' in fileName[0] or '.gif' in fileName[0]:
+        fileName = QFileDialog.getOpenFileName(caption='Open file', filter="Image files (*.jpg *.gif *.png *.jpeg)", options=options)
+        if '.png' in fileName[0] or '.jpg' in fileName[0] or '.gif' in fileName[0] or '.jpeg' in fileName[0]:
             self._photo = fileName[0]
             self.ui.photo.setPixmap(QPixmap(fileName[0]).scaled(289, 289))
     

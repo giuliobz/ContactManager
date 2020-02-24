@@ -1,18 +1,18 @@
 # ContactManager
 
-This is a simple Contact Manager application that can give the opportunity to the user memorize contacts informations. The application is implemented in Python and the interface is made entirely with PyQt5.
+This is a simple Contact Manager application used to memorize contacts informations. The application is implemented in Python and the interface is made entirely with PyQt5.
 
 <p align="center">
-  <img src="Build/git_images/list_window.png" width="280"/>
+  <img src="Build/git_images/contact_list.png" width="280"/>
 </p>
 
-The application is composed by a unique View that shows all the contacts that the user saved.
+The application is composed by a main view with which the user can manage the contact list. 
 
 ## Features
 
 Features include:
 
-- Multiple contacts selection : The user can select multiple contacts in order to facilitate their removal from the contact list, without deleting them one by one.
+- Multiple contacts selection : The user can select multiple contacts in order to facilitate their removal from the contact list without deleting them one by one.
 
 
 <p align="center">
@@ -22,11 +22,13 @@ Features include:
 
 - Search contact : the user can search contact by name, surname or by other information (e.g phone number, email) and by selecting a particular tag.
 
-- Modify contact : the user can modify existing contact by tapping in contact name. When the user modify an existing contact, the modified field changes the name color to semplify the user visualization.
+- Order contact list: the user can decide which type of order method to use: First Name ordering method or Second Name ordering method. 
+
+- Modify contact : the user can modify existing contact by tapping in contact name. When the user modify an existing contact, the modified field changes its name color to semplify the user visualization.
 
 <p align="center">
-  <img src="Build/git_images/contact_window_pre.png" width="300"/>
-  <img src="Build/git_images/contact_window_post.png" width="300"/>
+  <img src="Build/git_images/contact_pre.png" width="300"/>
+  <img src="Build/git_images/contact_post.png" width="300"/>
 </p>
 
 ## Download

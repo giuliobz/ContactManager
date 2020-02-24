@@ -30,11 +30,6 @@ class ListWidget(QDialog):
         # Connect model and controller
         self._model = model
 
-        # Define the variable of selected element in edit mode.
-        # the key is the item identifier and the value is
-        # the item QCheckBox current value.
-        self._selected = {}
-
         # Set up the user interface from Designer.
         self.ui = Ui_Form()
         self.ui.setupUi(self)
@@ -46,11 +41,10 @@ class ListWidget(QDialog):
         # Connect button behaviour
         self.ui.addButton.clicked.connect(lambda : changeCentralWidget(1))
         self.ui.editButton.clicked.connect(lambda : self.enableEdit())
-        self.ui.deleteButton.clicked.connect(lambda : self.enableEdit())
+        self.ui.deleteButton.clicked.connect(lambda : self.deleteContacts())
         self.ui.searchButton.clicked.connect(lambda : self.searchContacts())
 
         # Connect list to item change signal
-        self.ui.contactList.itemChanged.connect(self.upload_selected_element)
         self.ui.orderBox.currentTextChanged.connect(self._model.setCurrentOrder)
 
         # connect list to the model
@@ -62,14 +56,8 @@ class ListWidget(QDialog):
         self._model.loadListContact()
     
     # Function to change the QTreeWidget column visibility and the delete button visibility.
-    # When the user click edit he can delete multiple contacts by selecting them
-    # and clicking the delete button. If no one contacts is selected it only 
-    # change the QTreeWidget column visibility and delete button visibility.
     @pyqtSlot()
     def enableEdit(self):
-        if self._selected:
-            self._model.deleteContacts(self._selected)
-            self._selected = {}
         self.ui.deleteButton.setEnabled(not self.ui.deleteButton.isEnabled())
         self.ui.editButton.setEnabled(not self.ui.editButton.isEnabled())
         self.ui.contactList.setColumnHidden(0, not self.ui.contactList.isColumnHidden(0))
@@ -77,6 +65,15 @@ class ListWidget(QDialog):
     # Function to search contacts
     def searchContacts(self):
         self._model.searchContacts(self.ui.nameLine.text(), self.ui.tagSearch.currentText())
+
+    # Function to take the selected contact to delete
+    def deleteContacts(self):
+        selected = {}
+        for i in range(self.ui.contactList.invisibleRootItem().childCount()):
+                selected[self.ui.contactList.invisibleRootItem().child(i).data(0, Qt.UserRole)] = True if self.ui.contactList.invisibleRootItem().child(i).checkState(0) else False
+
+        self._model.deleteContacts(selected)
+        self.enableEdit()
 
 
     # Function that change the search button text in case the user is making a search.
@@ -102,12 +99,6 @@ class ListWidget(QDialog):
         contact.setData(0, Qt.UserRole, newContact['id'])
         self.ui.contactList.addTopLevelItem(contact)
         self.ui.contactList.setItemWidget(contact, 1, ContactButton(newContact['name'] + ' ' + newContact['secondName'], self._model, newContact['id']))
-
-    # When a element is selected or deselected the 
-    # selected_element variable is updated.
-    @pyqtSlot(QTreeWidgetItem, int)
-    def upload_selected_element(self, item, column):
-        self._selected[item.data(0, Qt.UserRole)] =  [True if item.checkState(0) == Qt.Checked else False]
 
     # Function to refresh the contact list.
     # Is used when: contacts are searched, new contact is insert,
