@@ -41,7 +41,7 @@ class ContactManager(QMainWindow):
         # Set starting central widget
         self.setCentralWidget(self._stack)
 
-    # This function emit the signal to change the user view.
+    # This function changes the user view.
     @pyqtSlot(int)
     def changeCentralWidget(self, widget_id):
         self._stack.setCurrentIndex(widget_id)

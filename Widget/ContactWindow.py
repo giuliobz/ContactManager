@@ -4,7 +4,7 @@ from PyQt5.QtCore import pyqtSlot, Qt, QRegExp
 from PyQt5.QtWidgets import QDialog,QFileDialog, QMessageBox
 from PyQt5.QtGui import QImage, QPixmap, QRegExpValidator
 
-# Window that contain all the clips in annotation buffer with the correlated preferencies
+
 class ContactWindow(QDialog):
 
     def __init__(self, model, changeCentralWidget):
@@ -43,10 +43,9 @@ class ContactWindow(QDialog):
         self.ui.emailLine.textChanged.connect(self.change_Email)
         self.ui.noteBox.textChanged.connect(lambda : self.change_note(self.ui.noteBox.toPlainText()))
 
-    # function to initialize the contact window with the selected contact.
+    # Function to initialize the contact window with the selected contact.
     @pyqtSlot(dict)
     def initializeContactInfo(self, contactInfo):
-        # Set info in window and memorize it
         self._currentContactInfo = contactInfo
 
         self.ui.photo.setPixmap(QPixmap(contactInfo['photo']).scaled(289, 289))
@@ -82,7 +81,7 @@ class ContactWindow(QDialog):
             self._new_photo = fileName[0]
             self.ui.photo.setPixmap(QPixmap(fileName[0]).scaled(289, 289))
 
-    # Function to display name changes
+    # Function to display name field changes
     @pyqtSlot(str)
     def change_name(self, name):
         if name != self._currentContactInfo['name']:
@@ -90,7 +89,7 @@ class ContactWindow(QDialog):
         else:
             self.ui.nameText.setStyleSheet('color: black')
     
-    # Function to display second name changes
+    # Function to display second name field changes
     @pyqtSlot(str)
     def change_secondName(self, secondName):
         if secondName != self._currentContactInfo['secondName']:
@@ -98,7 +97,7 @@ class ContactWindow(QDialog):
         else:
             self.ui.secondNameText.setStyleSheet('color: black')
             
-    # Function to display phone changes
+    # Function to display phone field changes
     @pyqtSlot(str)
     def change_Phone(self, phone):
         if phone != self._currentContactInfo['phone']:
@@ -106,7 +105,7 @@ class ContactWindow(QDialog):
         else:
             self.ui.phoneText.setStyleSheet('color: black')
 
-    # Function to display mail changes
+    # Function to display mail field changes
     @pyqtSlot(str)
     def change_Email(self, mail):
         if mail != self._currentContactInfo['mail']:
@@ -114,7 +113,7 @@ class ContactWindow(QDialog):
         else:
             self.ui.mailText.setStyleSheet('color: black')
 
-    # Function to display notes changes
+    # Function to display notes field changes
     @pyqtSlot(str)
     def change_note(self, note):
         if note!= self._currentContactInfo['notes']:

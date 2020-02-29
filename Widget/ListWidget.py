@@ -7,21 +7,6 @@ from Widget.ContactButton import ContactButton
 from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QDialog, QTreeWidgetItem
 
-def createContactInfo(contact):
-    contactInfo = {}
-
-    contactInfo['id'] = int(contact[0])
-    contactInfo['photo'] = (contact[1])
-    contactInfo['name'] = contact[2]
-    contactInfo['secondName'] = contact[3]
-    contactInfo['phone'] = contact[4]
-    contactInfo['mail'] = contact[5]
-    contactInfo['notes'] = contact[6]
-    contactInfo['tags'] = contact[7].split('/')
-
-    return contactInfo
-
-# Window that contain all the clips in annotation buffer with the correlated preferencies
 class ListWidget(QDialog):
 
     def __init__(self, model, changeCentralWidget):
@@ -77,7 +62,7 @@ class ListWidget(QDialog):
 
 
     # Function that change the search button text in case the user is making a search.
-    # After the user makes his contact search, tapping the Cancel search button 
+    # After the user makes his contact search, tapping the Cancel search button, 
     # he resets the view to the original one (if he does not make change).
     def changeSearchStatus(self, slot):
         if slot:
@@ -89,9 +74,10 @@ class ListWidget(QDialog):
             self.ui.tagSearch.setCurrentIndex(0)
 
 
-    # Add new anotation to QTreeWidget
-    # NewContaact is a list where the first element is the name and the second element is 
-    # a ContactWindow associated with the contact...
+    # Add new contact to the list. To the contacts are
+    # assigned an id, which is used to delete contact 
+    # and to set information in contact window when the 
+    # user want to see a contact informations.
     @pyqtSlot(dict)
     def add_contact(self, newContact):
         contact = QTreeWidgetItem()
