@@ -136,7 +136,7 @@ class ContactWindow(QDialog):
             if self.ui.tagsList.invisibleRootItem().child(i).checkState(0):
                 newContactInfo['tags'].append(self.ui.tagsList.invisibleRootItem().child(i).text(0))
         
-        # In a real case we controll if the contact updates is made or not.
+        # In a real case we controll if the contact is updated or not.
         self._model.updateContactInfos(newContactInfo, self._currentContactInfo)
         self.closeWindow()
     

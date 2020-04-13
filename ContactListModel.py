@@ -181,8 +181,7 @@ class Model(QObject):
             self.searchDone = False
             self.refreshListSignal.emit([ createContactInfo(contact) for contact in self._database.getContacts(self._currentIdOrder) ])
 
-    # Function to update contact informations. The information
-    # is changed only if it is changed.
+    # Function to update contact informations only if they are changed.
     @pyqtSlot(dict)
     def updateContactInfos(self, newContactInfo, currentContactInfo):
         contact_info = {}
