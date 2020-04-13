@@ -144,7 +144,7 @@ class Model(QObject):
 
                     lineText = line.lower()
                     for contact in current_contact_list:
-                        if lineText.lower() in contact['name'].lower() or lineText in contact['secondName'].lower() or lineText in contact['mail'] or lineText == contact['phone'] and tag in contact['tags']:
+                        if (lineText.lower() in contact['name'].lower() or lineText in contact['secondName'].lower() or lineText in contact['mail'] or lineText == contact['phone']) and tag in contact['tags']:
                             selected_contact.append(contact)
 
             # In this case the user makes  text search
