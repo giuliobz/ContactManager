@@ -40,11 +40,13 @@ After downloading the zip file, extract it and follow the Dependecies instructio
 ## Dependecies
 
 - PyQt5
+- cv2
 
 ```bash
 # Create the environment with pyqt installed 
 conda create -n pyqt5 ipython pyqt
 conda activate pyqt5
+pip install opencv-python
 ```
 
 ## Usage
